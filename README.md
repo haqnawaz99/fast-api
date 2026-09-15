@@ -26,7 +26,7 @@ If activation is blocked, use the environment's Python directly:
 | --- | --- | --- |
 | 01: Installation and version check | [Notes](notes/lecture_01.md) | [main.py](main.py) |
 | 02: First server and GET endpoints | [Notes](notes/lecture_02.md) | [Empty app](lecture_02.py), [home endpoint](lecture_02_01.py), [contact endpoint](lecture_02_02.py) |
-| 03: Path and query parameters | [Notes](notes/lecture_03.md) | [Product list](lecture_03.py), [path parameter](lecture_03_01.py), [mock data](mock.py) |
+| 03: Path and query parameters | [Notes](notes/lecture_03.md) | [Product list](lecture_03.py), [path parameter](lecture_03_01.py), [product lookup](lecture_03_02.py), [mock data](mock.py) |
 
 Each small step has a separate Python example, preserving earlier steps for teaching.
 
@@ -55,3 +55,11 @@ For the commented path-parameter example, stop the server and run:
 ```
 
 Open <http://127.0.0.1:8000/product/100> to receive `{"id": 100}`. This step returns the supplied ID without looking up a product.
+
+For product lookup, stop the server and run:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_02.py
+```
+
+Open <http://127.0.0.1:8000/product/2> to receive the Mouse product. A missing ID returns an error-message dictionary with HTTP 200 in this step; see the notes for the distinction between response content and HTTP status.
