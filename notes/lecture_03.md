@@ -2,7 +2,7 @@
 
 ## Step 1: Return a list of products
 
-Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Implementing parameter handling will follow in separate small Python examples.
+Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; query handling will follow later.
 
 ## Learning objectives
 
@@ -244,9 +244,74 @@ These are common design choices, not automatic database operations. Both kinds o
 4. Three: `id`, `title`, and `count`.
 5. No. The current endpoint ignores `count` and returns all three sample products.
 
+## Step 4: Implement a path parameter with comments
+
+Use [lecture_03_01.py](../lecture_03_01.py). It preserves the home and product-list endpoints and adds this small example:
+
+```python
+# Path parameter: {product_id} captures a value from the URL path.
+# The @ makes this a decorator that registers the function as a GET endpoint.
+@app.get("/product/{product_id}")
+def get_one_product(product_id: int):
+    # The argument name matches {product_id} in the route.
+    # FastAPI converts the URL value to an integer before calling this function.
+    # Invalid integer values, such as "abc", receive HTTP 422 automatically.
+    # Return the received ID as JSON; this step does not look up a product.
+    return {"id": product_id}
+```
+
+### Follow a request through the code
+
+1. The browser requests `/product/100`.
+2. The route `/product/{product_id}` matches and captures `100`.
+3. `product_id: int` tells FastAPI to convert and validate the value as an integer.
+4. FastAPI calls `get_one_product()` with the integer `100`.
+5. The function returns a dictionary, which becomes the JSON response `{"id": 100}`.
+
+The placeholder name and function argument must match. The colon in `product_id: int` introduces a Python type annotation. FastAPI uses this annotation for request conversion, validation, and documentation.
+
+Keep the `@` before `app.get(...)`. Without it, that line does not decorate and register the function below it.
+
+### Run and check
+
+Stop the earlier server with `Ctrl+C`, then run from PowerShell:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_01.py
+```
+
+Open <http://127.0.0.1:8000/product/100>:
+
+```json
+{"id": 100}
+```
+
+Expect HTTP `200 OK`. The value has no quotation marks because it is a JSON number.
+
+| Request path | Expected behavior in this example |
+| --- | --- |
+| `/product/1` | HTTP 200 with `{"id": 1}`. |
+| `/product/100` | HTTP 200 with `{"id": 100}`, even though the mock data has no product 100. |
+| `/product/abc` | HTTP 422 with validation details: the value cannot be parsed as an integer. |
+| `/product/1.5` | HTTP 422: a decimal value is not a valid integer here. |
+| `/products` | HTTP 200 with the complete product list. |
+| `/products/100` | HTTP 404: this example uses singular `/product/{product_id}`. |
+
+Earlier conceptual URLs used `/products/{product_id}`. The implemented route in this step is `/product/{product_id}`. Both are possible naming choices, but the browser path must match the route you registered.
+
+This function echoes the supplied ID. Its name does not make it search `mock.py`. Integer validation also does not check that a product exists or require a positive ID. Product lookup and additional rules are separate steps.
+
+Open <http://127.0.0.1:8000/docs>, expand **GET /product/{product_id}**, and select **Try it out**. Enter `100` into the required `product_id` field, then select **Execute**.
+
+### Practice
+
+1. Request `/product/2` and predict the JSON before checking it.
+2. Request `/product/abc` and compare its status with `/products/100`.
+3. Explain why `/product/999` succeeds even though the dataset has only three products.
+
 ## Next small steps
 
-Implement path and query parameters in separate Python examples. Keep `lecture_03.py` as the baseline that returns all products.
+Build product lookup and query handling in later separate examples. Keep `lecture_03.py` as the product-list baseline and `lecture_03_01.py` as the ID echo example.
 
 ## Reference
 
