@@ -2,7 +2,7 @@
 
 ## Step 1: Return a list of products
 
-Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; query handling will follow later.
+Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; step 6 adds a required query parameter.
 
 ## Learning objectives
 
@@ -392,9 +392,68 @@ Use `/docs` to execute the same requests and inspect both the response body and 
 2. In a practice copy, move the final return inside the loop. Predict and observe what happens when requesting product 2, then restore the indentation.
 3. Explain the difference between an invalid integer, a valid integer with no matching product, and a URL with no matching route.
 
+## Step 6: Greet a user with a query parameter
+
+Use [lecture_03_03.py](../lecture_03_03.py). It keeps the previous endpoints and appends:
+
+```python
+# Query parameter: supply name after ? in the URL, e.g. /greet?name=Ali.
+@app.get("/greet")
+def greet_user(name: str):
+    # name is a query parameter because it is not a placeholder in /greet.
+    # str means text; with no default value, name is required.
+    # The f-string inserts the supplied name into the greeting.
+    return {"greet": f"Hello {name}, Hows You ?"}
+```
+
+### Understand the code
+
+For `/greet?name=Ali`, the path is `/greet` and the query parameter is `name=Ali`. FastAPI reads the value and passes `"Ali"` to `greet_user()`.
+
+`name: str` declares a text argument. Because `name` is not a placeholder in the route, FastAPI treats this simple argument as a query parameter. With no default value, it is required.
+
+An **f-string** starts with `f` and inserts the value inside braces into the text. Here, `{name}` inserts the supplied name. These braces format a response string; they do not declare a URL path parameter.
+
+### Run and check
+
+Stop the earlier server with `Ctrl+C`, then run in PowerShell:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_03.py
+```
+
+Open <http://127.0.0.1:8000/greet?name=Ali>. Expect HTTP 200 and:
+
+```json
+{"greet": "Hello Ali, Hows You ?"}
+```
+
+| Request | Expected result |
+| --- | --- |
+| `/greet?name=Sara` | HTTP 200 with `Hello Sara, Hows You ?` in the `greet` field. |
+| `/greet` | HTTP 422: required `name` is missing. |
+| `/greet?username=Ali` | HTTP 422: `username` does not supply `name`. |
+| `/greet/Ali` | HTTP 404: this route takes the name in the query string. |
+| `/greet?name=Ali%20Khan` | HTTP 200 with `Hello Ali Khan, Hows You ?`. |
+| `/greet?name=` | HTTP 200 with `Hello , Hows You ?`. |
+
+Required means the parameter must be present. `str` alone does not require nonempty text. Missing-value validation details identify `name` as a query parameter.
+
+Open `/docs`, expand **GET /greet**, select **Try it out**, enter a name, and select **Execute**. The documentation marks `name` as required.
+
+### Compare the endpoints
+
+`/product/2` passes an ID in the path. `/greet?name=Ali` passes a name after `?`. Implementing `name` on `/greet` does not add filtering to `/products`; the product-list endpoint still returns every product.
+
+### Practice
+
+1. Request a greeting for your own name.
+2. Omit `name`, then supply an empty value. Explain the difference in responses.
+3. Explain why `/greet/Ali` does not call this function.
+
 ## Next small steps
 
-Add query handling and HTTP error handling in later separate examples. Keep the product-list, ID echo, and product-lookup examples as separate teaching steps.
+Add product query filtering and HTTP error handling in later separate examples. Preserve each completed example as its own file.
 
 ## Reference
 
