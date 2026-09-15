@@ -102,10 +102,49 @@ Open <http://127.0.0.1:8000/docs>, expand **GET /products**, select **Try it out
 2. Change one product name and check the new response.
 3. Visit `/` and `/products` and explain why their response structures differ.
 
+## Step 2: Understand path parameters
+
+Compare these two addresses:
+
+| URL | Intended meaning |
+| --- | --- |
+| `http://127.0.0.1:8000/products` | Request the complete product list. |
+| `http://127.0.0.1:8000/products/100` | Request the product whose ID is `100`, once a matching endpoint is implemented. |
+
+### Read the URL in small parts
+
+- `http://` is the protocol used for the request.
+- `127.0.0.1:8000` is the local server address and port.
+- `/products` identifies the product collection.
+- `/100` adds a value identifying a particular product.
+
+A **path parameter** is a variable part of a URL path. In FastAPI, a route pattern such as `/products/{product_id}` declares a placeholder named `product_id`.
+
+For a request to `/products/100`, FastAPI captures `100` and passes it to the matching endpoint function as `product_id`. A request to `/products/2` supplies `2` instead. We write braces in the route definition; we put the actual value in the browser URL.
+
+The ID is a product identifier, not a list position or the number of products to return. Capturing an ID does not automatically search `products`; the endpoint function must perform that lookup.
+
+### What happens with our current example?
+
+`lecture_03.py` currently registers only `/` and `/products`. Visiting `/products/100` therefore returns HTTP `404 Not Found` with:
+
+```json
+{"detail":"Not Found"}
+```
+
+This happens because the parameterized route has not been added yet. Also, our sample data contains IDs `1`, `2`, and `3`, so `100` is only an illustration of a URL value, not an existing product.
+
+### Quick practice
+
+1. In `/products/2`, identify the fixed part of the path and the parameter value.
+2. For the pattern `/products/{product_id}`, what value would `/products/3` supply?
+3. Explain why typing `/products/100` does not automatically create an endpoint.
+
 ## Next small steps
 
-Later examples will build on this product list to introduce path parameters and query parameters. This first example only returns the complete list.
+Implement a path parameter in a new Python example, then introduce query parameters. The current runnable example still returns the complete product list.
 
 ## Reference
 
 - [FastAPI: First Steps](https://fastapi.tiangolo.com/tutorial/first-steps/)
+- [FastAPI: Path Parameters](https://fastapi.tiangolo.com/tutorial/path-params/)
