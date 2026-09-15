@@ -149,7 +149,7 @@ Imagine browsing a shop: `/products` opens the product collection. Query paramet
 Consider:
 
 ```text
-http://127.0.0.1:8000/products?id=1&title=mobile
+http://127.0.0.1:8000/products?id=1&title=mobile&count=10
 ```
 
 ### Break the URL into parts
@@ -162,14 +162,19 @@ http://127.0.0.1:8000/products?id=1&title=mobile
 | `id=1` | A parameter named `id` with value `1`. |
 | `&` | Separates one parameter from the next. |
 | `title=mobile` | A parameter named `title` with value `mobile`. |
+| `count=10` | A third parameter named `count` with value `10`. |
 
 A **query string** is the part after `?`. Each **query parameter** is a name-value pair. Use `=` between a name and value, and `&` between pairs. Use one `?` to begin the query string, not another `?` for each parameter.
+
+This example contains three query parameters and two `&` separators.
 
 The path remains `/products`. The query supplies additional information to the request; it does not create a new route.
 
 ### What do these parameters do?
 
 An API could use `id` and `title` to filter products, but their names alone do not define the behavior. The endpoint must read the values and decide how to use them. For example, whether both criteria must match depends on the implementation.
+
+An API could define `count=10` as a request for at most ten matching products. It would return fewer if fewer matches exist. `count` is a name chosen by the API author, not a built-in FastAPI command; the endpoint must implement the limit. It does not mean product ID 10.
 
 Our mock data uses the field `name`, not `title`, and contains no product named `mobile`. This URL illustrates query syntax. A future implementation must choose whether to accept `name`, map `title` to `name`, or use a different dataset.
 
@@ -181,7 +186,8 @@ The current `get_products()` function takes no parameters and always returns `pr
 | --- | --- |
 | `/products` | HTTP 200 with the complete product list. |
 | `/products?id=1` | HTTP 200 with the same complete list. |
-| `/products?id=1&title=mobile` | HTTP 200 with the same complete list. |
+| `/products?id=1&title=mobile&count=10` | HTTP 200 with the same complete list. |
+| `/products?count=1` | HTTP 200 with all three sample products; no limit is implemented. |
 | `/products/100` | HTTP 404 because no matching path route exists. |
 
 The current endpoint ignores the supplied query parameters. Adding them to a URL does not automatically filter the data.
@@ -189,8 +195,20 @@ The current endpoint ignores the supplied query parameters. Adding them to a URL
 In PowerShell, keep the full URL in quotation marks so `&` stays part of the URL:
 
 ```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/products?id=1&title=mobile"
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/products?id=1&title=mobile&count=10"
 ```
+
+### Three URL forms at a glance
+
+All three examples use the server `http://127.0.0.1:8000`:
+
+| URL after the server address | What it supplies |
+| --- | --- |
+| `/products` | The collection path, with no parameter values. |
+| `/products/100` | A path value of `100` for a future `/products/{product_id}` route. |
+| `/products?id=1&title=mobile&count=10` | The collection path plus three query values: `id`, `title`, and `count`. |
+
+Read the final URL as: "Send a GET request to `/products`, supplying ID 1, title mobile, and count 10." The endpoint decides what those values mean and how they affect its response.
 
 ### Path parameters and query parameters compared
 
@@ -215,12 +233,16 @@ These are common design choices, not automatic database operations. Both kinds o
 1. In `/products?id=2&title=Mouse`, identify the path and both name-value pairs.
 2. Correct `/products?id=1?title=mobile`.
 3. Does `/products?id=1` currently return only one product? Explain why.
+4. How many query parameters are in `/products?id=1&title=mobile&count=10`?
+5. Would `/products?count=1` currently limit the response to one product?
 
 **Answers:**
 
 1. Path: `/products`; pairs: `id=2` and `title=Mouse`.
 2. `/products?id=1&title=mobile`.
 3. No. The current function returns the complete list without using query parameters.
+4. Three: `id`, `title`, and `count`.
+5. No. The current endpoint ignores `count` and returns all three sample products.
 
 ## Next small steps
 
