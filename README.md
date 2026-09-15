@@ -25,5 +25,16 @@ If activation is blocked, use the environment's Python directly:
 | Lecture | Notes | Python example |
 | --- | --- | --- |
 | 01: Installation and version check | [Notes](notes/lecture_01.md) | [main.py](main.py) |
+| 02: First server and GET endpoints | [Notes](notes/lecture_02.md) | [Empty app](lecture_02.py), [home endpoint](lecture_02_01.py), [contact endpoint](lecture_02_02.py) |
 
-Each lecture will have numbered notes linked to its Python examples. As later lectures extend `main.py`, completed examples can be preserved in numbered lecture folders.
+Each small step has a separate Python example, preserving earlier steps for teaching.
+
+## Run Lecture 02
+
+After installing the requirements, run one example at a time from PowerShell:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_02.py
+```
+
+Open <http://127.0.0.1:8000/>; the empty app returns `404 Not Found`. Stop the server with `Ctrl+C`, then replace the filename with `lecture_02_01.py` to add the home endpoint or `lecture_02_02.py` to add `/contact`. Automatic API documentation is available at <http://127.0.0.1:8000/docs>.
