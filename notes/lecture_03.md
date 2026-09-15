@@ -2,7 +2,7 @@
 
 ## Step 1: Return a list of products
 
-Before adding parameters, create a small product dataset and an endpoint that returns every product. Path and query parameters will be added in later small steps.
+Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Implementing parameter handling will follow in separate small Python examples.
 
 ## Learning objectives
 
@@ -10,6 +10,8 @@ Before adding parameters, create a small product dataset and an endpoint that re
 - Import a variable from another module.
 - Return a list of dictionaries through a GET endpoint.
 - Check the JSON response in a browser and the API documentation.
+- Identify path parameters and query parameters in a URL.
+- Distinguish sending a parameter from implementing behavior that uses it.
 
 ## 1. Create the mock data
 
@@ -140,11 +142,92 @@ This happens because the parameterized route has not been added yet. Also, our s
 2. For the pattern `/products/{product_id}`, what value would `/products/3` supply?
 3. Explain why typing `/products/100` does not automatically create an endpoint.
 
+## Step 3: Understand query parameters
+
+Imagine browsing a shop: `/products` opens the product collection. Query parameters can supply search criteria or display options to that endpoint, once its code supports them.
+
+Consider:
+
+```text
+http://127.0.0.1:8000/products?id=1&title=mobile
+```
+
+### Break the URL into parts
+
+| Part | Meaning |
+| --- | --- |
+| `http://127.0.0.1:8000` | The local server address. |
+| `/products` | The endpoint path. |
+| `?` | Starts the query string. |
+| `id=1` | A parameter named `id` with value `1`. |
+| `&` | Separates one parameter from the next. |
+| `title=mobile` | A parameter named `title` with value `mobile`. |
+
+A **query string** is the part after `?`. Each **query parameter** is a name-value pair. Use `=` between a name and value, and `&` between pairs. Use one `?` to begin the query string, not another `?` for each parameter.
+
+The path remains `/products`. The query supplies additional information to the request; it does not create a new route.
+
+### What do these parameters do?
+
+An API could use `id` and `title` to filter products, but their names alone do not define the behavior. The endpoint must read the values and decide how to use them. For example, whether both criteria must match depends on the implementation.
+
+Our mock data uses the field `name`, not `title`, and contains no product named `mobile`. This URL illustrates query syntax. A future implementation must choose whether to accept `name`, map `title` to `name`, or use a different dataset.
+
+### Predict the current response
+
+The current `get_products()` function takes no parameters and always returns `products`. Try these addresses with `lecture_03.py` running:
+
+| Request path and query | Current result |
+| --- | --- |
+| `/products` | HTTP 200 with the complete product list. |
+| `/products?id=1` | HTTP 200 with the same complete list. |
+| `/products?id=1&title=mobile` | HTTP 200 with the same complete list. |
+| `/products/100` | HTTP 404 because no matching path route exists. |
+
+The current endpoint ignores the supplied query parameters. Adding them to a URL does not automatically filter the data.
+
+In PowerShell, keep the full URL in quotation marks so `&` stays part of the URL:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/products?id=1&title=mobile"
+```
+
+### Path parameters and query parameters compared
+
+| Question | Path parameter | Query parameter |
+| --- | --- | --- |
+| Where is it? | Inside the path, such as `100` in `/products/100`. | After `?`, such as `id=1`. |
+| How is it named? | By a placeholder in the route, such as `{product_id}`. | By the name before `=`, such as `id`. |
+| Common purpose | Identify a particular resource. | Supply filters, search text, sorting, or pagination options. |
+| Is it required? | A declared path segment must be present to match that route. | It can be required or optional, depending on the endpoint definition. |
+
+These are common design choices, not automatic database operations. Both kinds of parameters need endpoint code to produce the intended response.
+
+### Small details to remember
+
+- For distinct names such as `id` and `title`, changing their order still supplies the same named values: `?title=mobile&id=1`.
+- URL values arrive as text. FastAPI can convert and validate them when the endpoint declares types, such as `int` for an ID.
+- Spaces and special characters in values need URL encoding. For example, `title=mobile%20phone` represents `mobile phone`.
+- Query parameters are not always optional; the endpoint definition decides whether omitting one is allowed.
+
+### Practice with answers
+
+1. In `/products?id=2&title=Mouse`, identify the path and both name-value pairs.
+2. Correct `/products?id=1?title=mobile`.
+3. Does `/products?id=1` currently return only one product? Explain why.
+
+**Answers:**
+
+1. Path: `/products`; pairs: `id=2` and `title=Mouse`.
+2. `/products?id=1&title=mobile`.
+3. No. The current function returns the complete list without using query parameters.
+
 ## Next small steps
 
-Implement a path parameter in a new Python example, then introduce query parameters. The current runnable example still returns the complete product list.
+Implement path and query parameters in separate Python examples. Keep `lecture_03.py` as the baseline that returns all products.
 
 ## Reference
 
 - [FastAPI: First Steps](https://fastapi.tiangolo.com/tutorial/first-steps/)
 - [FastAPI: Path Parameters](https://fastapi.tiangolo.com/tutorial/path-params/)
+- [FastAPI: Query Parameters](https://fastapi.tiangolo.com/tutorial/query-params/)
