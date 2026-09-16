@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 03: Path Parameters and Query Parameters in FastAPI · FastAPI classroom</title><meta name="description" content="Learn FastAPI in small runnable steps, with explained code and practice exercises.">
+<link rel="stylesheet" href="assets/style.css"><script src="assets/site.js" defer></script></head>
+<body><a class="skip" href="#content">Skip to lesson</a><header><a class="brand" href="index.html"><span>F /</span> FastAPI classroom</a><a href="downloads/examples.zip">Download examples ↓</a></header>
+<div class="layout"><aside><p class="eyebrow">YOUR LEARNING PATH</p><nav aria-label="Course"><a href="index.html">Course overview</a><a href="setup.html">Start here / setup</a><a  href="lecture_01.html">Lecture 01: Installing FastAPI and checking its version</a><a  href="lecture_02.html">Lecture 02: Your First FastAPI Server and GET Endpoint</a><a aria-current=page href="lecture_03.html">Lecture 03: Path Parameters and Query Parameters in FastAPI</a></nav><details><summary>On this page</summary><div class="toc">
+<ul>
+<li><a href="#lecture-03-path-parameters-and-query-parameters-in-fastapi">Lecture 03: Path Parameters and Query Parameters in FastAPI</a><ul>
+<li><a href="#step-1-return-a-list-of-products">Step 1: Return a list of products</a></li>
+<li><a href="#learning-objectives">Learning objectives</a></li>
+<li><a href="#1-create-the-mock-data">1. Create the mock data</a></li>
+<li><a href="#2-create-the-application">2. Create the application</a></li>
+<li><a href="#3-start-the-server">3. Start the server</a></li>
+<li><a href="#4-check-the-response">4. Check the response</a></li>
+<li><a href="#common-problems">Common problems</a></li>
+<li><a href="#practice">Practice</a></li>
+<li><a href="#step-2-understand-path-parameters">Step 2: Understand path parameters</a><ul>
+<li><a href="#read-the-url-in-small-parts">Read the URL in small parts</a></li>
+<li><a href="#what-happens-with-our-current-example">What happens with our current example?</a></li>
+<li><a href="#quick-practice">Quick practice</a></li>
+</ul>
+</li>
+<li><a href="#step-3-understand-query-parameters">Step 3: Understand query parameters</a><ul>
+<li><a href="#break-the-url-into-parts">Break the URL into parts</a></li>
+<li><a href="#what-do-these-parameters-do">What do these parameters do?</a></li>
+<li><a href="#predict-the-current-response">Predict the current response</a></li>
+<li><a href="#three-url-forms-at-a-glance">Three URL forms at a glance</a></li>
+<li><a href="#path-parameters-and-query-parameters-compared">Path parameters and query parameters compared</a></li>
+<li><a href="#small-details-to-remember">Small details to remember</a></li>
+<li><a href="#practice-with-answers">Practice with answers</a></li>
+</ul>
+</li>
+<li><a href="#step-4-implement-a-path-parameter-with-comments">Step 4: Implement a path parameter with comments</a><ul>
+<li><a href="#follow-a-request-through-the-code">Follow a request through the code</a></li>
+<li><a href="#run-and-check">Run and check</a></li>
+<li><a href="#practice_1">Practice</a></li>
+</ul>
+</li>
+<li><a href="#step-5-find-and-return-the-matching-product">Step 5: Find and return the matching product</a><ul>
+<li><a href="#understand-each-part">Understand each part</a></li>
+<li><a href="#trace-a-request-for-product-2">Trace a request for product 2</a></li>
+<li><a href="#why-indentation-matters">Why indentation matters</a></li>
+<li><a href="#run-and-check_1">Run and check</a></li>
+<li><a href="#practice_2">Practice</a></li>
+</ul>
+</li>
+<li><a href="#step-6-greet-a-user-with-a-query-parameter">Step 6: Greet a user with a query parameter</a><ul>
+<li><a href="#understand-the-code">Understand the code</a></li>
+<li><a href="#run-and-check_2">Run and check</a></li>
+<li><a href="#compare-the-endpoints">Compare the endpoints</a></li>
+<li><a href="#practice_3">Practice</a></li>
+</ul>
+</li>
+<li><a href="#step-7-receive-name-and-age-together">Step 7: Receive name and age together</a><ul>
+<li><a href="#understand-the-two-parameters">Understand the two parameters</a></li>
+<li><a href="#run-and-check_3">Run and check</a></li>
+<li><a href="#practice_4">Practice</a></li>
+</ul>
+</li>
+<li><a href="#next-small-steps">Next small steps</a></li>
+<li><a href="#reference">Reference</a></li>
+<li><a href="#complete-runnable-files">Complete runnable files</a><ul>
+<li><a href="#mockpy">mock.py</a></li>
+<li><a href="#lecture_03py">lecture_03.py</a></li>
+<li><a href="#lecture_03_01py">lecture_03_01.py</a></li>
+<li><a href="#lecture_03_02py">lecture_03_02.py</a></li>
+<li><a href="#lecture_03_03py">lecture_03_03.py</a></li>
+<li><a href="#lecture_03_04py">lecture_03_04.py</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</details><p class="aside-note">Small steps. Real code.<br>Learn at your own pace.</p></aside><main id="content"><div class="notice"><strong>Before you begin</strong> · <a href="setup.html">Set up your environment</a>. Read the notes, then <a href="#complete-runnable-files">copy a complete runnable file</a>.</div><h1 id="lecture-03-path-parameters-and-query-parameters-in-fastapi">Lecture 03: Path Parameters and Query Parameters in FastAPI<a class="headerlink" href="#lecture-03-path-parameters-and-query-parameters-in-fastapi" title="Permanent link">&para;</a></h1>
+<h2 id="step-1-return-a-list-of-products">Step 1: Return a list of products<a class="headerlink" href="#step-1-return-a-list-of-products" title="Permanent link">&para;</a></h2>
+<p>Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; step 6 adds a required query parameter.</p>
+<h2 id="learning-objectives">Learning objectives<a class="headerlink" href="#learning-objectives" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Store sample data in a separate Python file.</li>
+<li>Import a variable from another module.</li>
+<li>Return a list of dictionaries through a GET endpoint.</li>
+<li>Check the JSON response in a browser and the API documentation.</li>
+<li>Identify path parameters and query parameters in a URL.</li>
+<li>Distinguish sending a parameter from implementing behavior that uses it.</li>
+</ul>
+<h2 id="1-create-the-mock-data">1. Create the mock data<a class="headerlink" href="#1-create-the-mock-data" title="Permanent link">&para;</a></h2>
+<p>Create <a href="downloads/mock.py">mock.py</a> next to the application file:</p>
+<pre><code class="language-python">products = [
+    {&quot;id&quot;: 1, &quot;name&quot;: &quot;Laptop&quot;, &quot;price&quot;: 1200},
+    {&quot;id&quot;: 2, &quot;name&quot;: &quot;Mouse&quot;, &quot;price&quot;: 25},
+    {&quot;id&quot;: 3, &quot;name&quot;: &quot;Keyboard&quot;, &quot;price&quot;: 75},
+]
+</code></pre>
+<p>Mock data is made-up data used for learning or testing. These prices are fictional numbers for practice, with no currency assigned.</p>
+<p><code>products</code> is a Python list. Each item is a dictionary containing an <code>id</code>, a <code>name</code>, and a <code>price</code>. Each product has a different ID. This file stores data; it does not start a server or connect to a database.</p>
+<h2 id="2-create-the-application">2. Create the application<a class="headerlink" href="#2-create-the-application" title="Permanent link">&para;</a></h2>
+<p>Create <a href="downloads/lecture_03.py">lecture_03.py</a>:</p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+</code></pre>
+<p><code>from mock import products</code> imports the variable from <code>mock.py</code>. Omit <code>.py</code> in the import statement. Keep both files in the same directory.</p>
+<p><code>@app.get("/products")</code> registers the function below it for GET requests to <code>/products</code>. When a request arrives, <code>get_products()</code> returns the imported list. FastAPI converts the list and its dictionaries to a JSON array containing JSON objects.</p>
+<p>The home endpoint still returns the welcome message. The earlier lecture files remain available as separate examples.</p>
+<h2 id="3-start-the-server">3. Start the server<a class="headerlink" href="#3-start-the-server" title="Permanent link">&para;</a></h2>
+<p>Stop any earlier server with <code>Ctrl+C</code>. From the project directory in PowerShell, use the existing environment:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03.py
+</code></pre>
+<p>If project dependencies have not been installed, follow the <a href="setup.html">README setup instructions</a> first. No new dependencies are needed for this step.</p>
+<h2 id="4-check-the-response">4. Check the response<a class="headerlink" href="#4-check-the-response" title="Permanent link">&para;</a></h2>
+<p>Open <a href="http://127.0.0.1:8000/products">http://127.0.0.1:8000/products</a>. Expect HTTP status <code>200 OK</code> and this JSON response (spacing may differ):</p>
+<pre><code class="language-json">[
+  {&quot;id&quot;: 1, &quot;name&quot;: &quot;Laptop&quot;, &quot;price&quot;: 1200},
+  {&quot;id&quot;: 2, &quot;name&quot;: &quot;Mouse&quot;, &quot;price&quot;: 25},
+  {&quot;id&quot;: 3, &quot;name&quot;: &quot;Keyboard&quot;, &quot;price&quot;: 75}
+]
+</code></pre>
+<p>You can also request it from another PowerShell terminal:</p>
+<pre><code class="language-powershell">Invoke-RestMethod -Uri &quot;http://127.0.0.1:8000/products&quot;
+</code></pre>
+<p>PowerShell converts the JSON response into objects and may display them as a table.</p>
+<p>Open <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>, expand <strong>GET /products</strong>, select <strong>Try it out</strong>, then <strong>Execute</strong>. This step has no request parameters to enter.</p>
+<h2 id="common-problems">Common problems<a class="headerlink" href="#common-problems" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python cannot import <code>mock</code></td>
+<td>Put <code>mock.py</code> beside <code>lecture_03.py</code> and run from the project directory.</td>
+</tr>
+<tr>
+<td>Python cannot import <code>products</code></td>
+<td>Check that the variable in <code>mock.py</code> is named exactly <code>products</code>.</td>
+</tr>
+<tr>
+<td><code>/products</code> returns 404</td>
+<td>Save the files, start <code>lecture_03.py</code>, and check the path spelling.</td>
+</tr>
+<tr>
+<td>A syntax error appears in the data</td>
+<td>Check commas between dictionaries and matching brackets and quotation marks.</td>
+</tr>
+<tr>
+<td>Port 8000 is already in use</td>
+<td>Stop the previous server with <code>Ctrl+C</code> before running this example.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="practice">Practice<a class="headerlink" href="#practice" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add a fourth product with a unique ID in <code>mock.py</code>, save, and refresh <code>/products</code> after the development server reloads.</li>
+<li>Change one product name and check the new response.</li>
+<li>Visit <code>/</code> and <code>/products</code> and explain why their response structures differ.</li>
+</ol>
+<h2 id="step-2-understand-path-parameters">Step 2: Understand path parameters<a class="headerlink" href="#step-2-understand-path-parameters" title="Permanent link">&para;</a></h2>
+<p>Compare these two addresses:</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Intended meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://127.0.0.1:8000/products</code></td>
+<td>Request the complete product list.</td>
+</tr>
+<tr>
+<td><code>http://127.0.0.1:8000/products/100</code></td>
+<td>Request the product whose ID is <code>100</code>, once a matching endpoint is implemented.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="read-the-url-in-small-parts">Read the URL in small parts<a class="headerlink" href="#read-the-url-in-small-parts" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>http://</code> is the protocol used for the request.</li>
+<li><code>127.0.0.1:8000</code> is the local server address and port.</li>
+<li><code>/products</code> identifies the product collection.</li>
+<li><code>/100</code> adds a value identifying a particular product.</li>
+</ul>
+<p>A <strong>path parameter</strong> is a variable part of a URL path. In FastAPI, a route pattern such as <code>/products/{product_id}</code> declares a placeholder named <code>product_id</code>.</p>
+<p>For a request to <code>/products/100</code>, FastAPI captures <code>100</code> and passes it to the matching endpoint function as <code>product_id</code>. A request to <code>/products/2</code> supplies <code>2</code> instead. We write braces in the route definition; we put the actual value in the browser URL.</p>
+<p>The ID is a product identifier, not a list position or the number of products to return. Capturing an ID does not automatically search <code>products</code>; the endpoint function must perform that lookup.</p>
+<h3 id="what-happens-with-our-current-example">What happens with our current example?<a class="headerlink" href="#what-happens-with-our-current-example" title="Permanent link">&para;</a></h3>
+<p><code>lecture_03.py</code> currently registers only <code>/</code> and <code>/products</code>. Visiting <code>/products/100</code> therefore returns HTTP <code>404 Not Found</code> with:</p>
+<pre><code class="language-json">{&quot;detail&quot;:&quot;Not Found&quot;}
+</code></pre>
+<p>This happens because the parameterized route has not been added yet. Also, our sample data contains IDs <code>1</code>, <code>2</code>, and <code>3</code>, so <code>100</code> is only an illustration of a URL value, not an existing product.</p>
+<h3 id="quick-practice">Quick practice<a class="headerlink" href="#quick-practice" title="Permanent link">&para;</a></h3>
+<ol>
+<li>In <code>/products/2</code>, identify the fixed part of the path and the parameter value.</li>
+<li>For the pattern <code>/products/{product_id}</code>, what value would <code>/products/3</code> supply?</li>
+<li>Explain why typing <code>/products/100</code> does not automatically create an endpoint.</li>
+</ol>
+<h2 id="step-3-understand-query-parameters">Step 3: Understand query parameters<a class="headerlink" href="#step-3-understand-query-parameters" title="Permanent link">&para;</a></h2>
+<p>Imagine browsing a shop: <code>/products</code> opens the product collection. Query parameters can supply search criteria or display options to that endpoint, once its code supports them.</p>
+<p>Consider:</p>
+<pre><code class="language-text">http://127.0.0.1:8000/products?id=1&amp;title=mobile&amp;count=10
+</code></pre>
+<h3 id="break-the-url-into-parts">Break the URL into parts<a class="headerlink" href="#break-the-url-into-parts" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://127.0.0.1:8000</code></td>
+<td>The local server address.</td>
+</tr>
+<tr>
+<td><code>/products</code></td>
+<td>The endpoint path.</td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td>Starts the query string.</td>
+</tr>
+<tr>
+<td><code>id=1</code></td>
+<td>A parameter named <code>id</code> with value <code>1</code>.</td>
+</tr>
+<tr>
+<td><code>&amp;</code></td>
+<td>Separates one parameter from the next.</td>
+</tr>
+<tr>
+<td><code>title=mobile</code></td>
+<td>A parameter named <code>title</code> with value <code>mobile</code>.</td>
+</tr>
+<tr>
+<td><code>count=10</code></td>
+<td>A third parameter named <code>count</code> with value <code>10</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>query string</strong> is the part after <code>?</code>. Each <strong>query parameter</strong> is a name-value pair. Use <code>=</code> between a name and value, and <code>&amp;</code> between pairs. Use one <code>?</code> to begin the query string, not another <code>?</code> for each parameter.</p>
+<p>This example contains three query parameters and two <code>&amp;</code> separators.</p>
+<p>The path remains <code>/products</code>. The query supplies additional information to the request; it does not create a new route.</p>
+<h3 id="what-do-these-parameters-do">What do these parameters do?<a class="headerlink" href="#what-do-these-parameters-do" title="Permanent link">&para;</a></h3>
+<p>An API could use <code>id</code> and <code>title</code> to filter products, but their names alone do not define the behavior. The endpoint must read the values and decide how to use them. For example, whether both criteria must match depends on the implementation.</p>
+<p>An API could define <code>count=10</code> as a request for at most ten matching products. It would return fewer if fewer matches exist. <code>count</code> is a name chosen by the API author, not a built-in FastAPI command; the endpoint must implement the limit. It does not mean product ID 10.</p>
+<p>Our mock data uses the field <code>name</code>, not <code>title</code>, and contains no product named <code>mobile</code>. This URL illustrates query syntax. A future implementation must choose whether to accept <code>name</code>, map <code>title</code> to <code>name</code>, or use a different dataset.</p>
+<h3 id="predict-the-current-response">Predict the current response<a class="headerlink" href="#predict-the-current-response" title="Permanent link">&para;</a></h3>
+<p>The current <code>get_products()</code> function takes no parameters and always returns <code>products</code>. Try these addresses with <code>lecture_03.py</code> running:</p>
+<table>
+<thead>
+<tr>
+<th>Request path and query</th>
+<th>Current result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/products</code></td>
+<td>HTTP 200 with the complete product list.</td>
+</tr>
+<tr>
+<td><code>/products?id=1</code></td>
+<td>HTTP 200 with the same complete list.</td>
+</tr>
+<tr>
+<td><code>/products?id=1&amp;title=mobile&amp;count=10</code></td>
+<td>HTTP 200 with the same complete list.</td>
+</tr>
+<tr>
+<td><code>/products?count=1</code></td>
+<td>HTTP 200 with all three sample products; no limit is implemented.</td>
+</tr>
+<tr>
+<td><code>/products/100</code></td>
+<td>HTTP 404 because no matching path route exists.</td>
+</tr>
+</tbody>
+</table>
+<p>The current endpoint ignores the supplied query parameters. Adding them to a URL does not automatically filter the data.</p>
+<p>In PowerShell, keep the full URL in quotation marks so <code>&amp;</code> stays part of the URL:</p>
+<pre><code class="language-powershell">Invoke-RestMethod -Uri &quot;http://127.0.0.1:8000/products?id=1&amp;title=mobile&amp;count=10&quot;
+</code></pre>
+<h3 id="three-url-forms-at-a-glance">Three URL forms at a glance<a class="headerlink" href="#three-url-forms-at-a-glance" title="Permanent link">&para;</a></h3>
+<p>All three examples use the server <code>http://127.0.0.1:8000</code>:</p>
+<table>
+<thead>
+<tr>
+<th>URL after the server address</th>
+<th>What it supplies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/products</code></td>
+<td>The collection path, with no parameter values.</td>
+</tr>
+<tr>
+<td><code>/products/100</code></td>
+<td>A path value of <code>100</code> for a future <code>/products/{product_id}</code> route.</td>
+</tr>
+<tr>
+<td><code>/products?id=1&amp;title=mobile&amp;count=10</code></td>
+<td>The collection path plus three query values: <code>id</code>, <code>title</code>, and <code>count</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Read the final URL as: "Send a GET request to <code>/products</code>, supplying ID 1, title mobile, and count 10." The endpoint decides what those values mean and how they affect its response.</p>
+<h3 id="path-parameters-and-query-parameters-compared">Path parameters and query parameters compared<a class="headerlink" href="#path-parameters-and-query-parameters-compared" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Path parameter</th>
+<th>Query parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where is it?</td>
+<td>Inside the path, such as <code>100</code> in <code>/products/100</code>.</td>
+<td>After <code>?</code>, such as <code>id=1</code>.</td>
+</tr>
+<tr>
+<td>How is it named?</td>
+<td>By a placeholder in the route, such as <code>{product_id}</code>.</td>
+<td>By the name before <code>=</code>, such as <code>id</code>.</td>
+</tr>
+<tr>
+<td>Common purpose</td>
+<td>Identify a particular resource.</td>
+<td>Supply filters, search text, sorting, or pagination options.</td>
+</tr>
+<tr>
+<td>Is it required?</td>
+<td>A declared path segment must be present to match that route.</td>
+<td>It can be required or optional, depending on the endpoint definition.</td>
+</tr>
+</tbody>
+</table>
+<p>These are common design choices, not automatic database operations. Both kinds of parameters need endpoint code to produce the intended response.</p>
+<h3 id="small-details-to-remember">Small details to remember<a class="headerlink" href="#small-details-to-remember" title="Permanent link">&para;</a></h3>
+<ul>
+<li>For distinct names such as <code>id</code> and <code>title</code>, changing their order still supplies the same named values: <code>?title=mobile&amp;id=1</code>.</li>
+<li>URL values arrive as text. FastAPI can convert and validate them when the endpoint declares types, such as <code>int</code> for an ID.</li>
+<li>Spaces and special characters in values need URL encoding. For example, <code>title=mobile%20phone</code> represents <code>mobile phone</code>.</li>
+<li>Query parameters are not always optional; the endpoint definition decides whether omitting one is allowed.</li>
+</ul>
+<h3 id="practice-with-answers">Practice with answers<a class="headerlink" href="#practice-with-answers" title="Permanent link">&para;</a></h3>
+<ol>
+<li>In <code>/products?id=2&amp;title=Mouse</code>, identify the path and both name-value pairs.</li>
+<li>Correct <code>/products?id=1?title=mobile</code>.</li>
+<li>Does <code>/products?id=1</code> currently return only one product? Explain why.</li>
+<li>How many query parameters are in <code>/products?id=1&amp;title=mobile&amp;count=10</code>?</li>
+<li>Would <code>/products?count=1</code> currently limit the response to one product?</li>
+</ol>
+<p><strong>Answers:</strong></p>
+<ol>
+<li>Path: <code>/products</code>; pairs: <code>id=2</code> and <code>title=Mouse</code>.</li>
+<li><code>/products?id=1&amp;title=mobile</code>.</li>
+<li>No. The current function returns the complete list without using query parameters.</li>
+<li>Three: <code>id</code>, <code>title</code>, and <code>count</code>.</li>
+<li>No. The current endpoint ignores <code>count</code> and returns all three sample products.</li>
+</ol>
+<h2 id="step-4-implement-a-path-parameter-with-comments">Step 4: Implement a path parameter with comments<a class="headerlink" href="#step-4-implement-a-path-parameter-with-comments" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_03_01.py">lecture_03_01.py</a>. It preserves the home and product-list endpoints and adds this small example:</p>
+<pre><code class="language-python"># Path parameter: {product_id} captures a value from the URL path.
+# The @ makes this a decorator that registers the function as a GET endpoint.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # The argument name matches {product_id} in the route.
+    # FastAPI converts the URL value to an integer before calling this function.
+    # Invalid integer values, such as &quot;abc&quot;, receive HTTP 422 automatically.
+    # Return the received ID as JSON; this step does not look up a product.
+    return {&quot;id&quot;: product_id}
+</code></pre>
+<h3 id="follow-a-request-through-the-code">Follow a request through the code<a class="headerlink" href="#follow-a-request-through-the-code" title="Permanent link">&para;</a></h3>
+<ol>
+<li>The browser requests <code>/product/100</code>.</li>
+<li>The route <code>/product/{product_id}</code> matches and captures <code>100</code>.</li>
+<li><code>product_id: int</code> tells FastAPI to convert and validate the value as an integer.</li>
+<li>FastAPI calls <code>get_one_product()</code> with the integer <code>100</code>.</li>
+<li>The function returns a dictionary, which becomes the JSON response <code>{"id": 100}</code>.</li>
+</ol>
+<p>The placeholder name and function argument must match. The colon in <code>product_id: int</code> introduces a Python type annotation. FastAPI uses this annotation for request conversion, validation, and documentation.</p>
+<p>Keep the <code>@</code> before <code>app.get(...)</code>. Without it, that line does not decorate and register the function below it.</p>
+<h3 id="run-and-check">Run and check<a class="headerlink" href="#run-and-check" title="Permanent link">&para;</a></h3>
+<p>Stop the earlier server with <code>Ctrl+C</code>, then run from PowerShell:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_01.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/product/100">http://127.0.0.1:8000/product/100</a>:</p>
+<pre><code class="language-json">{&quot;id&quot;: 100}
+</code></pre>
+<p>Expect HTTP <code>200 OK</code>. The value has no quotation marks because it is a JSON number.</p>
+<table>
+<thead>
+<tr>
+<th>Request path</th>
+<th>Expected behavior in this example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/product/1</code></td>
+<td>HTTP 200 with <code>{"id": 1}</code>.</td>
+</tr>
+<tr>
+<td><code>/product/100</code></td>
+<td>HTTP 200 with <code>{"id": 100}</code>, even though the mock data has no product 100.</td>
+</tr>
+<tr>
+<td><code>/product/abc</code></td>
+<td>HTTP 422 with validation details: the value cannot be parsed as an integer.</td>
+</tr>
+<tr>
+<td><code>/product/1.5</code></td>
+<td>HTTP 422: a decimal value is not a valid integer here.</td>
+</tr>
+<tr>
+<td><code>/products</code></td>
+<td>HTTP 200 with the complete product list.</td>
+</tr>
+<tr>
+<td><code>/products/100</code></td>
+<td>HTTP 404: this example uses singular <code>/product/{product_id}</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Earlier conceptual URLs used <code>/products/{product_id}</code>. The implemented route in this step is <code>/product/{product_id}</code>. Both are possible naming choices, but the browser path must match the route you registered.</p>
+<p>This function echoes the supplied ID. Its name does not make it search <code>mock.py</code>. Integer validation also does not check that a product exists or require a positive ID. Product lookup and additional rules are separate steps.</p>
+<p>Open <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a>, expand <strong>GET /product/{product_id}</strong>, and select <strong>Try it out</strong>. Enter <code>100</code> into the required <code>product_id</code> field, then select <strong>Execute</strong>.</p>
+<h3 id="practice_1">Practice<a class="headerlink" href="#practice_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Request <code>/product/2</code> and predict the JSON before checking it.</li>
+<li>Request <code>/product/abc</code> and compare its status with <code>/products/100</code>.</li>
+<li>Explain why <code>/product/999</code> succeeds even though the dataset has only three products.</li>
+</ol>
+<h2 id="step-5-find-and-return-the-matching-product">Step 5: Find and return the matching product<a class="headerlink" href="#step-5-find-and-return-the-matching-product" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_03_02.py">lecture_03_02.py</a>. This new example keeps <code>/</code> and <code>/products</code> and changes the single-product function from echoing an ID to searching the data. The previous examples remain available.</p>
+<pre><code class="language-python"># Capture the product ID from the path and validate it as an integer.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # Check each product dictionary in the list, one at a time.
+    for one_product in products:
+        # Read its ID and compare it with the ID supplied in the URL.
+        if one_product.get(&quot;id&quot;) == product_id:
+            # A match ends the function immediately and returns the full product.
+            return one_product
+
+    # Outside the loop: return this only after every product has been checked.
+    # A normal dictionary response still has HTTP status 200 in this step.
+    return {&quot;error&quot;: &quot;Product not Found for this ID.&quot;}
+</code></pre>
+<h3 id="understand-each-part">Understand each part<a class="headerlink" href="#understand-each-part" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>products</code> is the list imported from <code>mock.py</code>.</li>
+<li><code>for one_product in products:</code> visits one dictionary at a time. <code>one_product</code> is a temporary variable for the current dictionary.</li>
+<li><code>one_product.get("id")</code> reads that dictionary's ID. If the key is absent, <code>.get()</code> returns <code>None</code> instead of raising a <code>KeyError</code>.</li>
+<li><code>==</code> compares the stored ID with the requested ID. It does not assign a value.</li>
+<li><code>return one_product</code> sends the full matching dictionary back and immediately ends the function. No additional <code>break</code> is needed.</li>
+<li>The last <code>return</code> runs only if the loop finishes without a match. It also handles an empty product list.</li>
+</ul>
+<p>The stored IDs and the validated <code>product_id</code> are integers, so they can be compared directly. A product ID is not a list index: the code checks the <code>id</code> field rather than assuming an item's position.</p>
+<h3 id="trace-a-request-for-product-2">Trace a request for product 2<a class="headerlink" href="#trace-a-request-for-product-2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>FastAPI receives <code>/product/2</code> and converts the path value to integer <code>2</code>.</li>
+<li>The loop checks Laptop: <code>1 == 2</code> is false, so it continues.</li>
+<li>It checks Mouse: <code>2 == 2</code> is true.</li>
+<li>The function returns the Mouse dictionary and stops before checking Keyboard.</li>
+</ol>
+<p>For <code>/product/100</code>, none of the three IDs match, so the function reaches the error-message return after the loop.</p>
+<h3 id="why-indentation-matters">Why indentation matters<a class="headerlink" href="#why-indentation-matters" title="Permanent link">&para;</a></h3>
+<p>Keep the error-message return outside the <code>for</code> loop, at the same indentation level as <code>for</code>. If it is inside the loop, a nonmatching first product could end the search before later products are checked.</p>
+<h3 id="run-and-check_1">Run and check<a class="headerlink" href="#run-and-check_1" title="Permanent link">&para;</a></h3>
+<p>Stop the earlier server with <code>Ctrl+C</code>, then run:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_02.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/product/2">http://127.0.0.1:8000/product/2</a>. Expect HTTP 200 and:</p>
+<pre><code class="language-json">{&quot;id&quot;: 2, &quot;name&quot;: &quot;Mouse&quot;, &quot;price&quot;: 25}
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/product/100">http://127.0.0.1:8000/product/100</a>. In this teaching step, expect HTTP 200 with:</p>
+<pre><code class="language-json">{&quot;error&quot;: &quot;Product not Found for this ID.&quot;}
+</code></pre>
+<p>An <code>error</code> key is just response content. Returning this dictionary does not automatically set HTTP status 404. A later error-handling step can introduce <code>HTTPException</code> to send a proper missing-product status.</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Expected result in <code>lecture_03_02.py</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/product/1</code></td>
+<td>HTTP 200 with Laptop.</td>
+</tr>
+<tr>
+<td><code>/product/2</code></td>
+<td>HTTP 200 with Mouse; confirms the search continues past the first item.</td>
+</tr>
+<tr>
+<td><code>/product/3</code></td>
+<td>HTTP 200 with Keyboard.</td>
+</tr>
+<tr>
+<td><code>/product/100</code></td>
+<td>HTTP 200 with the custom error message.</td>
+</tr>
+<tr>
+<td><code>/product/abc</code></td>
+<td>HTTP 422 before the lookup function runs.</td>
+</tr>
+<tr>
+<td><code>/products/100</code></td>
+<td>HTTP 404 because this path has no route.</td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>/docs</code> to execute the same requests and inspect both the response body and status code.</p>
+<h3 id="practice_2">Practice<a class="headerlink" href="#practice_2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Request product 3 and explain which comparisons happen before it is returned.</li>
+<li>In a practice copy, move the final return inside the loop. Predict and observe what happens when requesting product 2, then restore the indentation.</li>
+<li>Explain the difference between an invalid integer, a valid integer with no matching product, and a URL with no matching route.</li>
+</ol>
+<h2 id="step-6-greet-a-user-with-a-query-parameter">Step 6: Greet a user with a query parameter<a class="headerlink" href="#step-6-greet-a-user-with-a-query-parameter" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_03_03.py">lecture_03_03.py</a>. It keeps the previous endpoints and appends:</p>
+<pre><code class="language-python"># Query parameter: supply name after ? in the URL, e.g. /greet?name=Ali.
+@app.get(&quot;/greet&quot;)
+def greet_user(name: str):
+    # name is a query parameter because it is not a placeholder in /greet.
+    # str means text; with no default value, name is required.
+    # The f-string inserts the supplied name into the greeting.
+    return {&quot;greet&quot;: f&quot;Hello {name}, Hows You ?&quot;}
+</code></pre>
+<h3 id="understand-the-code">Understand the code<a class="headerlink" href="#understand-the-code" title="Permanent link">&para;</a></h3>
+<p>For <code>/greet?name=Ali</code>, the path is <code>/greet</code> and the query parameter is <code>name=Ali</code>. FastAPI reads the value and passes <code>"Ali"</code> to <code>greet_user()</code>.</p>
+<p><code>name: str</code> declares a text argument. Because <code>name</code> is not a placeholder in the route, FastAPI treats this simple argument as a query parameter. With no default value, it is required.</p>
+<p>An <strong>f-string</strong> starts with <code>f</code> and inserts the value inside braces into the text. Here, <code>{name}</code> inserts the supplied name. These braces format a response string; they do not declare a URL path parameter.</p>
+<h3 id="run-and-check_2">Run and check<a class="headerlink" href="#run-and-check_2" title="Permanent link">&para;</a></h3>
+<p>Stop the earlier server with <code>Ctrl+C</code>, then run in PowerShell:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_03.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/greet?name=Ali">http://127.0.0.1:8000/greet?name=Ali</a>. Expect HTTP 200 and:</p>
+<pre><code class="language-json">{&quot;greet&quot;: &quot;Hello Ali, Hows You ?&quot;}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Expected result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/greet?name=Sara</code></td>
+<td>HTTP 200 with <code>Hello Sara, Hows You ?</code> in the <code>greet</code> field.</td>
+</tr>
+<tr>
+<td><code>/greet</code></td>
+<td>HTTP 422: required <code>name</code> is missing.</td>
+</tr>
+<tr>
+<td><code>/greet?username=Ali</code></td>
+<td>HTTP 422: <code>username</code> does not supply <code>name</code>.</td>
+</tr>
+<tr>
+<td><code>/greet/Ali</code></td>
+<td>HTTP 404: this route takes the name in the query string.</td>
+</tr>
+<tr>
+<td><code>/greet?name=Ali%20Khan</code></td>
+<td>HTTP 200 with <code>Hello Ali Khan, Hows You ?</code>.</td>
+</tr>
+<tr>
+<td><code>/greet?name=</code></td>
+<td>HTTP 200 with <code>Hello , Hows You ?</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Required means the parameter must be present. <code>str</code> alone does not require nonempty text. Missing-value validation details identify <code>name</code> as a query parameter.</p>
+<p>Open <code>/docs</code>, expand <strong>GET /greet</strong>, select <strong>Try it out</strong>, enter a name, and select <strong>Execute</strong>. The documentation marks <code>name</code> as required.</p>
+<h3 id="compare-the-endpoints">Compare the endpoints<a class="headerlink" href="#compare-the-endpoints" title="Permanent link">&para;</a></h3>
+<p><code>/product/2</code> passes an ID in the path. <code>/greet?name=Ali</code> passes a name after <code>?</code>. Implementing <code>name</code> on <code>/greet</code> does not add filtering to <code>/products</code>; the product-list endpoint still returns every product.</p>
+<h3 id="practice_3">Practice<a class="headerlink" href="#practice_3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Request a greeting for your own name.</li>
+<li>Omit <code>name</code>, then supply an empty value. Explain the difference in responses.</li>
+<li>Explain why <code>/greet/Ali</code> does not call this function.</li>
+</ol>
+<h2 id="step-7-receive-name-and-age-together">Step 7: Receive name and age together<a class="headerlink" href="#step-7-receive-name-and-age-together" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_03_04.py">lecture_03_04.py</a>. It preserves the product endpoints and extends the greeting with a second required query parameter. The name-only example remains in <code>lecture_03_03.py</code>.</p>
+<pre><code class="language-python"># Supply both query parameters: /greet?name=Ali&amp;age=20.
+@app.get(&quot;/greet&quot;)
+def greet_user(name: str, age: int):
+    # Neither argument appears in the route path, so both are query parameters.
+    # No default values means both name and age are required.
+    # FastAPI converts age to an integer; invalid values receive HTTP 422.
+    return {
+        &quot;greet&quot;: f&quot;Hello {name}, you are {age} years old.&quot;,
+        &quot;name&quot;: name,
+        &quot;age&quot;: age,
+    }
+</code></pre>
+<h3 id="understand-the-two-parameters">Understand the two parameters<a class="headerlink" href="#understand-the-two-parameters" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>name: str</code> receives text.</li>
+<li><code>age: int</code> converts the query value to an integer and validates it.</li>
+<li>Both parameters are required because neither has a default value.</li>
+<li><code>?</code> starts the query string; <code>&amp;</code> separates <code>name=Ali</code> from <code>age=20</code>.</li>
+<li>The response includes a greeting plus separate fields so you can see that <code>age</code> is a JSON number.</li>
+</ul>
+<h3 id="run-and-check_3">Run and check<a class="headerlink" href="#run-and-check_3" title="Permanent link">&para;</a></h3>
+<p>Stop the previous server with <code>Ctrl+C</code>, then run:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_04.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/greet?name=Ali&amp;age=20">http://127.0.0.1:8000/greet?name=Ali&amp;age=20</a>. Expect HTTP 200 and:</p>
+<pre><code class="language-json">{
+  &quot;greet&quot;: &quot;Hello Ali, you are 20 years old.&quot;,
+  &quot;name&quot;: &quot;Ali&quot;,
+  &quot;age&quot;: 20
+}
+</code></pre>
+<p>From another PowerShell terminal, keep the URL quoted:</p>
+<pre><code class="language-powershell">Invoke-RestMethod -Uri &quot;http://127.0.0.1:8000/greet?name=Ali&amp;age=20&quot;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Expected result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/greet?name=Ali&amp;age=20</code></td>
+<td>HTTP 200 with the greeting and both values.</td>
+</tr>
+<tr>
+<td><code>/greet?age=20&amp;name=Ali</code></td>
+<td>The same response: these parameter names can appear in either order.</td>
+</tr>
+<tr>
+<td><code>/greet?name=Ali</code></td>
+<td>HTTP 422 because <code>age</code> is missing.</td>
+</tr>
+<tr>
+<td><code>/greet?age=20</code></td>
+<td>HTTP 422 because <code>name</code> is missing.</td>
+</tr>
+<tr>
+<td><code>/greet?name=Ali&amp;age=twenty</code></td>
+<td>HTTP 422 because <code>age</code> cannot be parsed as an integer.</td>
+</tr>
+<tr>
+<td><code>/greet?name=Ali&amp;age=20.5</code></td>
+<td>HTTP 422 because the age value is not an integer.</td>
+</tr>
+</tbody>
+</table>
+<p>FastAPI checks the inputs before calling the function. For invalid age input, the validation details identify <code>age</code> in the query. An integer annotation alone does not enforce a realistic age range: negative integers are accepted at this stage. Additional constraints can be introduced later.</p>
+<p>Open <code>/docs</code>, expand <strong>GET /greet</strong>, select <strong>Try it out</strong>, and fill in both required fields before selecting <strong>Execute</strong>.</p>
+<h3 id="practice_4">Practice<a class="headerlink" href="#practice_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Change the name and age and predict all three response fields.</li>
+<li>Reverse the order of the query parameters and compare the responses.</li>
+<li>Remove one parameter, then try a nonnumeric age. Explain each validation error.</li>
+</ol>
+<h2 id="next-small-steps">Next small steps<a class="headerlink" href="#next-small-steps" title="Permanent link">&para;</a></h2>
+<p>Add product query filtering and HTTP error handling in later separate examples. Preserve each completed example as its own file.</p>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://fastapi.tiangolo.com/tutorial/first-steps/">FastAPI: First Steps</a></li>
+<li><a href="https://fastapi.tiangolo.com/tutorial/path-params/">FastAPI: Path Parameters</a></li>
+<li><a href="https://fastapi.tiangolo.com/tutorial/query-params/">FastAPI: Query Parameters</a></li>
+</ul>
+<h2 id="complete-runnable-files">Complete runnable files<a class="headerlink" href="#complete-runnable-files" title="Permanent link">&para;</a></h2>
+<p>Copy each file into the same project folder, or <a href="downloads/examples.zip">download the full bundle</a>. Complete files below include all imports and earlier endpoints. Read <a href="setup.html">setup</a> first.</p>
+<h3 id="mockpy">mock.py<a class="headerlink" href="#mockpy" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/mock.py">Download this file</a></p>
+<pre><code class="language-python">&quot;&quot;&quot;Small fictional product dataset for the teaching examples.&quot;&quot;&quot;
+
+products = [
+    {&quot;id&quot;: 1, &quot;name&quot;: &quot;Laptop&quot;, &quot;price&quot;: 1200},
+    {&quot;id&quot;: 2, &quot;name&quot;: &quot;Mouse&quot;, &quot;price&quot;: 25},
+    {&quot;id&quot;: 3, &quot;name&quot;: &quot;Keyboard&quot;, &quot;price&quot;: 75},
+]
+</code></pre>
+<p>This data file is imported by Lecture 03 examples. Save it beside them; it does not start a server.</p>
+<h3 id="lecture_03py">lecture_03.py<a class="headerlink" href="#lecture_03py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_03.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03.py
+</code></pre>
+<h3 id="lecture_03_01py">lecture_03_01.py<a class="headerlink" href="#lecture_03_01py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_03_01.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+
+
+# Path parameter: {product_id} captures a value from the URL path.
+# The @ makes this a decorator that registers the function as a GET endpoint.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # The argument name matches {product_id} in the route.
+    # FastAPI converts the URL value to an integer before calling this function.
+    # Invalid integer values, such as &quot;abc&quot;, receive HTTP 422 automatically.
+    # Return the received ID as JSON; this step does not look up a product.
+    return {&quot;id&quot;: product_id}
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_01.py
+</code></pre>
+<h3 id="lecture_03_02py">lecture_03_02.py<a class="headerlink" href="#lecture_03_02py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_03_02.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+
+
+# Capture the product ID from the path and validate it as an integer.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # Check each product dictionary in the list, one at a time.
+    for one_product in products:
+        # Read its ID and compare it with the ID supplied in the URL.
+        if one_product.get(&quot;id&quot;) == product_id:
+            # A match ends the function immediately and returns the full product.
+            return one_product
+
+    # Outside the loop: return this only after every product has been checked.
+    # A normal dictionary response still has HTTP status 200 in this step.
+    return {&quot;error&quot;: &quot;Product not Found for this ID.&quot;}
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_02.py
+</code></pre>
+<h3 id="lecture_03_03py">lecture_03_03.py<a class="headerlink" href="#lecture_03_03py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_03_03.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+
+
+# Capture the product ID from the path and validate it as an integer.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # Check each product dictionary in the list, one at a time.
+    for one_product in products:
+        # Read its ID and compare it with the ID supplied in the URL.
+        if one_product.get(&quot;id&quot;) == product_id:
+            # A match ends the function immediately and returns the full product.
+            return one_product
+
+    # Outside the loop: return this only after every product has been checked.
+    # A normal dictionary response still has HTTP status 200 in this step.
+    return {&quot;error&quot;: &quot;Product not Found for this ID.&quot;}
+
+
+# Query parameter: supply name after ? in the URL, e.g. /greet?name=Ali.
+@app.get(&quot;/greet&quot;)
+def greet_user(name: str):
+    # name is a query parameter because it is not a placeholder in /greet.
+    # str means text; with no default value, name is required.
+    # The f-string inserts the supplied name into the greeting.
+    return {&quot;greet&quot;: f&quot;Hello {name}, Hows You ?&quot;}
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_03.py
+</code></pre>
+<h3 id="lecture_03_04py">lecture_03_04.py<a class="headerlink" href="#lecture_03_04py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_03_04.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from mock import products
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/products&quot;)
+def get_products():
+    return products
+
+
+# Capture the product ID from the path and validate it as an integer.
+@app.get(&quot;/product/{product_id}&quot;)
+def get_one_product(product_id: int):
+    # Check each product dictionary in the list, one at a time.
+    for one_product in products:
+        # Read its ID and compare it with the ID supplied in the URL.
+        if one_product.get(&quot;id&quot;) == product_id:
+            # A match ends the function immediately and returns the full product.
+            return one_product
+
+    # Outside the loop: return this only after every product has been checked.
+    # A normal dictionary response still has HTTP status 200 in this step.
+    return {&quot;error&quot;: &quot;Product not Found for this ID.&quot;}
+
+
+# Supply both query parameters: /greet?name=Ali&amp;age=20.
+@app.get(&quot;/greet&quot;)
+def greet_user(name: str, age: int):
+    # Neither argument appears in the route path, so both are query parameters.
+    # No default values means both name and age are required.
+    # FastAPI converts age to an integer; invalid values receive HTTP 422.
+    return {
+        &quot;greet&quot;: f&quot;Hello {name}, you are {age} years old.&quot;,
+        &quot;name&quot;: name,
+        &quot;age&quot;: age,
+    }
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_03_04.py
+</code></pre><div class="lesson-nav"><a href="index.html">← All lessons</a></div><footer>FastAPI classroom · Python + Windows PowerShell · <a href="https://github.com/haqnawaz99/fast-api">Source on GitHub</a></footer></main></div><p id="copy-status" role="status" aria-live="polite"></p></body></html>

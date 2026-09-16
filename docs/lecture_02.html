@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 02: Your First FastAPI Server and GET Endpoint · FastAPI classroom</title><meta name="description" content="Learn FastAPI in small runnable steps, with explained code and practice exercises.">
+<link rel="stylesheet" href="assets/style.css"><script src="assets/site.js" defer></script></head>
+<body><a class="skip" href="#content">Skip to lesson</a><header><a class="brand" href="index.html"><span>F /</span> FastAPI classroom</a><a href="downloads/examples.zip">Download examples ↓</a></header>
+<div class="layout"><aside><p class="eyebrow">YOUR LEARNING PATH</p><nav aria-label="Course"><a href="index.html">Course overview</a><a href="setup.html">Start here / setup</a><a  href="lecture_01.html">Lecture 01: Installing FastAPI and checking its version</a><a aria-current=page href="lecture_02.html">Lecture 02: Your First FastAPI Server and GET Endpoint</a><a  href="lecture_03.html">Lecture 03: Path Parameters and Query Parameters in FastAPI</a></nav><details><summary>On this page</summary><div class="toc">
+<ul>
+<li><a href="#lecture-02-your-first-fastapi-server-and-get-endpoint">Lecture 02: Your First FastAPI Server and GET Endpoint</a><ul>
+<li><a href="#step-1-create-and-start-the-application">Step 1: Create and start the application</a></li>
+<li><a href="#learning-objectives">Learning objectives</a></li>
+<li><a href="#python-example">Python example</a></li>
+<li><a href="#start-the-server">Start the server</a></li>
+<li><a href="#open-the-application">Open the application</a></li>
+<li><a href="#common-problems">Common problems</a></li>
+<li><a href="#practice">Practice</a></li>
+<li><a href="#reference">Reference</a></li>
+<li><a href="#step-2-add-the-home-endpoint">Step 2: Add the home endpoint</a></li>
+<li><a href="#step-3-add-the-contact-endpoint">Step 3: Add the contact endpoint</a><ul>
+<li><a href="#common-problems-with-endpoints">Common problems with endpoints</a></li>
+<li><a href="#practice-with-endpoints">Practice with endpoints</a></li>
+</ul>
+</li>
+<li><a href="#complete-runnable-files">Complete runnable files</a><ul>
+<li><a href="#lecture_02py">lecture_02.py</a></li>
+<li><a href="#lecture_02_01py">lecture_02_01.py</a></li>
+<li><a href="#lecture_02_02py">lecture_02_02.py</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</details><p class="aside-note">Small steps. Real code.<br>Learn at your own pace.</p></aside><main id="content"><div class="notice"><strong>Before you begin</strong> · <a href="setup.html">Set up your environment</a>. Read the notes, then <a href="#complete-runnable-files">copy a complete runnable file</a>.</div><h1 id="lecture-02-your-first-fastapi-server-and-get-endpoint">Lecture 02: Your First FastAPI Server and GET Endpoint<a class="headerlink" href="#lecture-02-your-first-fastapi-server-and-get-endpoint" title="Permanent link">&para;</a></h1>
+<h2 id="step-1-create-and-start-the-application">Step 1: Create and start the application<a class="headerlink" href="#step-1-create-and-start-the-application" title="Permanent link">&para;</a></h2>
+<p>This first step creates a FastAPI application and starts a local development
+server. We will add our first GET endpoint in a later step of this lecture.</p>
+<h2 id="learning-objectives">Learning objectives<a class="headerlink" href="#learning-objectives" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Import FastAPI and create an application object.</li>
+<li>Start and stop the development server.</li>
+<li>Open the application and its automatic documentation in a browser.</li>
+<li>Explain why an application without a root endpoint returns <code>Not Found</code>.</li>
+</ul>
+<h2 id="python-example">Python example<a class="headerlink" href="#python-example" title="Permanent link">&para;</a></h2>
+<p>The runnable example is <a href="downloads/lecture_02.py">lecture_02.py</a>.</p>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+</code></pre>
+<p><code>from fastapi import FastAPI</code> imports the class used to create an application.
+<code>app = FastAPI()</code> creates the application object. We will register endpoints on
+this object in subsequent steps.</p>
+<p>Creating the object does not start a server by itself. We use the FastAPI
+development command to serve the application.</p>
+<h2 id="start-the-server">Start the server<a class="headerlink" href="#start-the-server" title="Permanent link">&para;</a></h2>
+<p>Open PowerShell in the project directory. Use the existing <code>.venv</code> environment:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\Activate.ps1
+fastapi dev lecture_02.py
+</code></pre>
+<p>If activation is unavailable, run the environment's executable directly:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02.py
+</code></pre>
+<p>Keep the terminal running while using the application. Development mode reloads
+the server when source files change. It is intended for local development.</p>
+<p>Expected startup output includes a server address such as
+<code>http://127.0.0.1:8000</code> and an application startup completion message. Exact log
+formatting can vary by installed version.</p>
+<h2 id="open-the-application">Open the application<a class="headerlink" href="#open-the-application" title="Permanent link">&para;</a></h2>
+<p>Visit <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> in your browser. At this stage, expect HTTP status
+<code>404</code> with this JSON response:</p>
+<pre><code class="language-json">{&quot;detail&quot;:&quot;Not Found&quot;}
+</code></pre>
+<p>This means the server received the request, but no endpoint matches the root
+path <code>/</code>. It does not mean the server failed to start.</p>
+<p>Opening this address in a browser sends a GET request. GET is an HTTP method
+used to request data. An endpoint connects a method and path to a Python
+function that handles the request. Our application has no custom endpoints yet.</p>
+<p>Visit <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a> to open the automatic interactive API
+documentation. The documentation page is available, but has no custom
+operations to display at this stage.</p>
+<p><code>127.0.0.1</code> refers to your own computer, and <code>8000</code> is the port used by the
+development server. Press <code>Ctrl+C</code> in the server terminal to stop it.</p>
+<h2 id="common-problems">Common problems<a class="headerlink" href="#common-problems" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fastapi</code> is not recognized</td>
+<td>Activate <code>.venv</code> or use the executable path shown above.</td>
+</tr>
+<tr>
+<td>The FastAPI executable is missing</td>
+<td>Follow the dependency installation instructions in the project README. The CLI requires FastAPI's standard dependencies.</td>
+</tr>
+<tr>
+<td>The source file cannot be found</td>
+<td>Run the command from the directory containing <code>lecture_02.py</code>.</td>
+</tr>
+<tr>
+<td>The browser cannot connect</td>
+<td>Check that the server is still running and that the browser address matches the terminal output.</td>
+</tr>
+<tr>
+<td>Port 8000 is already in use</td>
+<td>Stop your earlier server with <code>Ctrl+C</code>, or run <code>fastapi dev lecture_02.py --port 8001</code> and visit port <code>8001</code>.</td>
+</tr>
+<tr>
+<td><code>/</code> returns <code>Not Found</code></td>
+<td>This is expected until a root endpoint is added.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="practice">Practice<a class="headerlink" href="#practice" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Start the example and open <code>/</code> and <code>/docs</code>.</li>
+<li>Explain why <code>/</code> returns a 404 response while <code>/docs</code> opens successfully.</li>
+<li>Stop the server and observe what happens when you refresh the browser.</li>
+<li>Restart the server using port <code>8001</code> and open its documentation.</li>
+</ol>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://fastapi.tiangolo.com/tutorial/first-steps/">FastAPI: First Steps</a></li>
+</ul>
+<h2 id="step-2-add-the-home-endpoint">Step 2: Add the home endpoint<a class="headerlink" href="#step-2-add-the-home-endpoint" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_02_01.py">lecture_02_01.py</a>. Keep the previous file so each step can be run separately.</p>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+</code></pre>
+<p><code>@app.get("/")</code> is a decorator: it registers the function below it to handle GET requests to the root path <code>/</code>. FastAPI calls <code>home()</code> when that request arrives. The function returns a Python string, which FastAPI sends as a JSON string by default.</p>
+<p>Stop the earlier server with <code>Ctrl+C</code>, then run:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02_01.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>. Expect HTTP status <code>200 OK</code> and this response body:</p>
+<pre><code class="language-json">&quot;Welcome to FastAPI Series !&quot;
+</code></pre>
+<p>The quotation marks belong to the JSON string format. The response is a string, not a JSON object with named fields.</p>
+<h2 id="step-3-add-the-contact-endpoint">Step 3: Add the contact endpoint<a class="headerlink" href="#step-3-add-the-contact-endpoint" title="Permanent link">&para;</a></h2>
+<p>Use <a href="downloads/lecture_02_02.py">lecture_02_02.py</a>. It keeps the home endpoint and adds this code below it:</p>
+<pre><code class="language-python">@app.get(&quot;/contact&quot;)
+def contact():
+    return &quot;You can connect us any time.&quot;
+</code></pre>
+<p>The decorator connects GET requests at <code>/contact</code> to <code>contact()</code>. Defining a function alone does not register an endpoint. The path in the decorator determines the URL; the function name does not.</p>
+<p>Stop the earlier server with <code>Ctrl+C</code>, then run:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02_02.py
+</code></pre>
+<p>Open <a href="http://127.0.0.1:8000/contact">http://127.0.0.1:8000/contact</a>. Expect HTTP status <code>200 OK</code> and:</p>
+<pre><code class="language-json">&quot;You can connect us any time.&quot;
+</code></pre>
+<p>The root URL still returns the welcome message. Open <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a> to see both <code>GET /</code> and <code>GET /contact</code>. Expand an operation, select <strong>Try it out</strong>, and then <strong>Execute</strong> to inspect its response.</p>
+<h3 id="common-problems-with-endpoints">Common problems with endpoints<a class="headerlink" href="#common-problems-with-endpoints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>If <code>/contact</code> returns 404, check that you saved and started <code>lecture_02_02.py</code> and included its decorator.</li>
+<li>Keep each decorator directly above the function it registers.</li>
+<li>Indent each <code>return</code> statement by four spaces.</li>
+<li>Run one example at a time on port 8000 to avoid a port conflict.</li>
+</ul>
+<h3 id="practice-with-endpoints">Practice with endpoints<a class="headerlink" href="#practice-with-endpoints" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Change the home message, save the file, and refresh the browser.</li>
+<li>Visit both endpoints in step 3 and explain which function handles each request.</li>
+<li>Try an unregistered path such as <code>/missing</code> and explain the 404 response.</li>
+</ol>
+<h2 id="complete-runnable-files">Complete runnable files<a class="headerlink" href="#complete-runnable-files" title="Permanent link">&para;</a></h2>
+<p>Copy each file into the same project folder, or <a href="downloads/examples.zip">download the full bundle</a>. Complete files below include all imports and earlier endpoints. Read <a href="setup.html">setup</a> first.</p>
+<h3 id="lecture_02py">lecture_02.py<a class="headerlink" href="#lecture_02py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_02.py">Download this file</a></p>
+<pre><code class="language-python">r&quot;&quot;&quot;Lecture 02, step 1: create an app before adding a GET endpoint.
+
+Run from the project directory:
+    .\.venv\Scripts\fastapi.exe dev lecture_02.py
+&quot;&quot;&quot;
+
+from fastapi import FastAPI
+
+app = FastAPI()
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02.py
+</code></pre>
+<h3 id="lecture_02_01py">lecture_02_01.py<a class="headerlink" href="#lecture_02_01py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_02_01.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02_01.py
+</code></pre>
+<h3 id="lecture_02_02py">lecture_02_02.py<a class="headerlink" href="#lecture_02_02py" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/lecture_02_02.py">Download this file</a></p>
+<pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get(&quot;/&quot;)
+def home():
+    return &quot;Welcome to FastAPI Series !&quot;
+
+
+@app.get(&quot;/contact&quot;)
+def contact():
+    return &quot;You can connect us any time.&quot;
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02_02.py
+</code></pre><div class="lesson-nav"><a href="index.html">← All lessons</a><a href="lecture_03.html">Next lesson →</a></div><footer>FastAPI classroom · Python + Windows PowerShell · <a href="https://github.com/haqnawaz99/fast-api">Source on GitHub</a></footer></main></div><p id="copy-status" role="status" aria-live="polite"></p></body></html>

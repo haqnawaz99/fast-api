@@ -79,3 +79,31 @@ For two required query parameters, stop the server and run:
 ```
 
 Open <http://127.0.0.1:8000/greet?name=Ali&age=20>. Both values are required; `age` must be an integer.
+
+## Student website
+
+Open [the HTML homepage](docs/index.html), or serve it locally:
+
+```powershell
+.\.venv\Scripts\python.exe -m http.server 8080 --directory docs
+```
+
+Visit <http://localhost:8080>. The site includes a setup guide, lesson navigation, explanations, copy buttons, and downloadable complete examples. FastAPI examples run on students' computers, not on GitHub Pages.
+
+### Update the website
+
+Edit Markdown in `notes/` and the Python examples, then rebuild:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-site.txt
+.\.venv\Scripts\python.exe scripts/build_site.py
+.\.venv\Scripts\python.exe scripts/check_site.py
+```
+
+Commit the generated `docs/` files together with their sources. Do not edit generated HTML directly. New `notes/lecture_XX.md` files and matching `lecture_XX*.py` examples are discovered automatically. Website build dependencies are isolated in `requirements-site.txt`; application dependencies remain in `requirements.txt`.
+
+### GitHub Pages publishing
+
+After merging the feature PR, select **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository. The included workflow validates PR builds and deploys only from `main`. Run **Actions → Lesson website → Run workflow** on `main` if needed after enabling Pages.
+
+The expected address is <https://haqnawaz99.github.io/fast-api/> once deployment succeeds. This address is not a claim that deployment has completed. See [GitHub's Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).

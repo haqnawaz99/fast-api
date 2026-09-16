@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 01: Installing FastAPI and checking its version · FastAPI classroom</title><meta name="description" content="Learn FastAPI in small runnable steps, with explained code and practice exercises.">
+<link rel="stylesheet" href="assets/style.css"><script src="assets/site.js" defer></script></head>
+<body><a class="skip" href="#content">Skip to lesson</a><header><a class="brand" href="index.html"><span>F /</span> FastAPI classroom</a><a href="downloads/examples.zip">Download examples ↓</a></header>
+<div class="layout"><aside><p class="eyebrow">YOUR LEARNING PATH</p><nav aria-label="Course"><a href="index.html">Course overview</a><a href="setup.html">Start here / setup</a><a aria-current=page href="lecture_01.html">Lecture 01: Installing FastAPI and checking its version</a><a  href="lecture_02.html">Lecture 02: Your First FastAPI Server and GET Endpoint</a><a  href="lecture_03.html">Lecture 03: Path Parameters and Query Parameters in FastAPI</a></nav><details><summary>On this page</summary><div class="toc">
+<ul>
+<li><a href="#lecture-01-installing-fastapi-and-checking-its-version">Lecture 01: Installing FastAPI and checking its version</a><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#learning-objectives">Learning objectives</a></li>
+<li><a href="#1-prepare-the-virtual-environment">1. Prepare the virtual environment</a></li>
+<li><a href="#2-install-fastapi">2. Install FastAPI</a></li>
+<li><a href="#3-create-mainpy">3. Create main.py</a></li>
+<li><a href="#4-run-the-file">4. Run the file</a></li>
+<li><a href="#5-common-problems">5. Common problems</a></li>
+<li><a href="#practice">Practice</a></li>
+<li><a href="#recap">Recap</a></li>
+<li><a href="#complete-runnable-files">Complete runnable files</a><ul>
+<li><a href="#mainpy">main.py</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</details><p class="aside-note">Small steps. Real code.<br>Learn at your own pace.</p></aside><main id="content"><div class="notice"><strong>Before you begin</strong> · <a href="setup.html">Set up your environment</a>. Read the notes, then <a href="#complete-runnable-files">copy a complete runnable file</a>.</div><h1 id="lecture-01-installing-fastapi-and-checking-its-version">Lecture 01: Installing FastAPI and checking its version<a class="headerlink" href="#lecture-01-installing-fastapi-and-checking-its-version" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This lesson covers setting up a Python virtual environment, installing FastAPI, and checking its installed version with a simple Python program. Commands use Windows PowerShell.</p>
+<h2 id="learning-objectives">Learning objectives<a class="headerlink" href="#learning-objectives" title="Permanent link">&para;</a></h2>
+<p>By the end of this lesson, students should be able to:</p>
+<ul>
+<li>Explain why a project uses a virtual environment.</li>
+<li>Install FastAPI into that environment.</li>
+<li>Import a Python package and display its version.</li>
+<li>Run a Python file from the terminal.</li>
+</ul>
+<h2 id="1-prepare-the-virtual-environment">1. Prepare the virtual environment<a class="headerlink" href="#1-prepare-the-virtual-environment" title="Permanent link">&para;</a></h2>
+<p>A virtual environment gives this project its own installed packages. Installing a package here keeps the project's dependencies separate from other projects.</p>
+<p>Our environment is named <code>.venv</code>. On a fresh copy of the repository, create it with:</p>
+<pre><code class="language-powershell">py -m venv .venv
+</code></pre>
+<p>Activate it from the repository folder:</p>
+<pre><code class="language-powershell">.\.venv\Scripts\Activate.ps1
+</code></pre>
+<p>The terminal usually displays <code>(.venv)</code> after activation. The name in parentheses identifies the active environment.</p>
+<h2 id="2-install-fastapi">2. Install FastAPI<a class="headerlink" href="#2-install-fastapi" title="Permanent link">&para;</a></h2>
+<p>With the virtual environment activated, run:</p>
+<pre><code class="language-powershell">python -m pip install &quot;fastapi[standard]&quot;
+</code></pre>
+<p><code>python -m pip</code> runs pip using the selected Python interpreter. <code>install</code> adds a package, and <code>[standard]</code> requests FastAPI's standard optional dependencies. Keep the quotation marks around the package specification.</p>
+<p>See the <a href="https://fastapi.tiangolo.com/tutorial/#install-fastapi">official FastAPI documentation</a> for additional installation guidance.</p>
+<p>For the version recorded in this repository, install from the dependency file instead:</p>
+<pre><code class="language-powershell">python -m pip install -r requirements.txt
+</code></pre>
+<p><code>requirements.txt</code> pins FastAPI's version. Its additional dependencies are resolved by pip and are not individually pinned.</p>
+<h2 id="3-create-mainpy">3. Create main.py<a class="headerlink" href="#3-create-mainpy" title="Permanent link">&para;</a></h2>
+<p>Create <a href="downloads/main.py">main.py</a> with the following code:</p>
+<pre><code class="language-python">import fastapi
+
+print(fastapi.__version__)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>import fastapi</code></td>
+<td>Makes the installed FastAPI package available in this file.</td>
+</tr>
+<tr>
+<td><code>fastapi.__version__</code></td>
+<td>Reads the package's version string; there are two underscores on each side of <code>version</code>.</td>
+</tr>
+<tr>
+<td><code>print(...)</code></td>
+<td>Displays that value in the terminal.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-run-the-file">4. Run the file<a class="headerlink" href="#4-run-the-file" title="Permanent link">&para;</a></h2>
+<pre><code class="language-powershell">python main.py
+</code></pre>
+<p>This repository pins FastAPI to <code>0.141.1</code>, so its expected output is:</p>
+<pre><code class="language-text">0.141.1
+</code></pre>
+<p>A different version number can simply mean a different release was installed. This script checks installation and then exits. It does not yet create an API application or start a web server.</p>
+<h2 id="5-common-problems">5. Common problems<a class="headerlink" href="#5-common-problems" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError: No module named 'fastapi'</code></td>
+<td>Install dependencies using the same interpreter that runs the script.</td>
+</tr>
+<tr>
+<td>PowerShell blocks activation</td>
+<td>Run <code>.\.venv\Scripts\python.exe main.py</code> directly; activation is optional.</td>
+</tr>
+<tr>
+<td>VS Code cannot resolve the import</td>
+<td>Choose <code>.venv\Scripts\python.exe</code> using <strong>Python: Select Interpreter</strong>.</td>
+</tr>
+<tr>
+<td>Python cannot find <code>main.py</code></td>
+<td>Open the terminal in the repository folder.</td>
+</tr>
+<tr>
+<td>Import behaves unexpectedly</td>
+<td>Do not name your own file <code>fastapi.py</code>; that can hide the installed package.</td>
+</tr>
+</tbody>
+</table>
+<p>To confirm which interpreter is running:</p>
+<pre><code class="language-powershell">python -c &quot;import sys; print(sys.executable)&quot;
+</code></pre>
+<p>Its path should end in <code>.venv\Scripts\python.exe</code>. To leave the activated environment, run <code>deactivate</code>.</p>
+<h2 id="practice">Practice<a class="headerlink" href="#practice" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Run <code>main.py</code> and record the installed FastAPI version.</li>
+<li>Change the print statement to <code>print("FastAPI version:", fastapi.__version__)</code> and run it again.</li>
+<li>Explain why installing a package in one Python environment may not make it available in another.</li>
+<li>Does this program start a web server? Explain your answer.</li>
+</ol>
+<h2 id="recap">Recap<a class="headerlink" href="#recap" title="Permanent link">&para;</a></h2>
+<p>Create or activate the environment, install FastAPI, import it in <code>main.py</code>, and print its version to confirm that the package is available.</p>
+<h2 id="complete-runnable-files">Complete runnable files<a class="headerlink" href="#complete-runnable-files" title="Permanent link">&para;</a></h2>
+<p>Copy each file into the same project folder, or <a href="downloads/examples.zip">download the full bundle</a>. Complete files below include all imports and earlier endpoints. Read <a href="setup.html">setup</a> first.</p>
+<h3 id="mainpy">main.py<a class="headerlink" href="#mainpy" title="Permanent link">&para;</a></h3>
+<p><a href="downloads/main.py">Download this file</a></p>
+<pre><code class="language-python">import fastapi
+
+print(fastapi.__version__)
+</code></pre>
+<p>Run from the project folder (stop any previous server first):</p>
+<pre><code class="language-powershell">.\.venv\Scripts\python.exe main.py
+</code></pre><div class="lesson-nav"><a href="index.html">← All lessons</a><a href="lecture_02.html">Next lesson →</a></div><footer>FastAPI classroom · Python + Windows PowerShell · <a href="https://github.com/haqnawaz99/fast-api">Source on GitHub</a></footer></main></div><p id="copy-status" role="status" aria-live="polite"></p></body></html>

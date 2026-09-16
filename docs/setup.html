@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup · FastAPI classroom</title><meta name="description" content="Learn FastAPI in small runnable steps, with explained code and practice exercises.">
+<link rel="stylesheet" href="assets/style.css"><script src="assets/site.js" defer></script></head>
+<body><a class="skip" href="#content">Skip to lesson</a><header><a class="brand" href="index.html"><span>F /</span> FastAPI classroom</a><a href="downloads/examples.zip">Download examples ↓</a></header>
+<div class="layout"><aside><p class="eyebrow">YOUR LEARNING PATH</p><nav aria-label="Course"><a href="index.html">Course overview</a><a href="setup.html">Start here / setup</a><a  href="lecture_01.html">Lecture 01: Installing FastAPI and checking its version</a><a  href="lecture_02.html">Lecture 02: Your First FastAPI Server and GET Endpoint</a><a  href="lecture_03.html">Lecture 03: Path Parameters and Query Parameters in FastAPI</a></nav><details><summary>On this page</summary><div class="toc">
+<ul>
+<li><a href="#start-here-set-up-your-classroom-workspace">Start here: set up your classroom workspace</a><ul>
+<li><a href="#1-get-the-files">1. Get the files</a></li>
+<li><a href="#2-create-the-environment-once">2. Create the environment once</a></li>
+<li><a href="#3-check-the-installation">3. Check the installation</a></li>
+<li><a href="#4-run-a-server-example">4. Run a server example</a></li>
+<li><a href="#how-to-use-each-lesson">How to use each lesson</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</details><p class="aside-note">Small steps. Real code.<br>Learn at your own pace.</p></aside><main id="content"><h1 id="start-here-set-up-your-classroom-workspace">Start here: set up your classroom workspace<a class="headerlink" href="#start-here-set-up-your-classroom-workspace" title="Permanent link">&para;</a></h1>
+<p>You need Python installed on your computer and a text editor such as VS Code. These instructions use Windows PowerShell.</p>
+<h2 id="1-get-the-files">1. Get the files<a class="headerlink" href="#1-get-the-files" title="Permanent link">&para;</a></h2>
+<p><a href="downloads/examples.zip">Download all examples</a>, extract the ZIP into a folder, then open that folder in VS Code. Open a PowerShell terminal in the same folder. Keep <code>mock.py</code> beside the Lecture 03 files.</p>
+<h2 id="2-create-the-environment-once">2. Create the environment once<a class="headerlink" href="#2-create-the-environment-once" title="Permanent link">&para;</a></h2>
+<pre><code class="language-powershell">py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+</code></pre>
+<p>A virtual environment keeps this project's packages separate. These commands use its Python directly, so activation is not required. If <code>py</code> is unavailable, check that Python is installed and restart your terminal.</p>
+<h2 id="3-check-the-installation">3. Check the installation<a class="headerlink" href="#3-check-the-installation" title="Permanent link">&para;</a></h2>
+<pre><code class="language-powershell">.\.venv\Scripts\python.exe main.py
+</code></pre>
+<p>Expected output: <code>0.141.1</code> with the supplied requirements.</p>
+<h2 id="4-run-a-server-example">4. Run a server example<a class="headerlink" href="#4-run-a-server-example" title="Permanent link">&para;</a></h2>
+<pre><code class="language-powershell">.\.venv\Scripts\fastapi.exe dev lecture_02_01.py
+</code></pre>
+<p>Keep this terminal open. Visit <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> for the welcome message and <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a> for interactive API documentation. Press <code>Ctrl+C</code> to stop the server before starting another example.</p>
+<h2 id="how-to-use-each-lesson">How to use each lesson<a class="headerlink" href="#how-to-use-each-lesson" title="Permanent link">&para;</a></h2>
+<p>Read the explanation, copy the complete file from the lesson's runnable-files section, save it with the displayed filename, and run the command below it. Short snippets in the notes explain one part of a program; the runnable-files section contains complete programs.</p>
+<p>The website hosts reading material and downloads. Python runs on your own computer; GitHub Pages does not run the FastAPI server.</p><footer>FastAPI classroom · Python + Windows PowerShell · <a href="https://github.com/haqnawaz99/fast-api">Source on GitHub</a></footer></main></div><p id="copy-status" role="status" aria-live="polite"></p></body></html>
