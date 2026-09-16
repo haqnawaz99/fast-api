@@ -451,6 +451,75 @@ Open `/docs`, expand **GET /greet**, select **Try it out**, enter a name, and se
 2. Omit `name`, then supply an empty value. Explain the difference in responses.
 3. Explain why `/greet/Ali` does not call this function.
 
+## Step 7: Receive name and age together
+
+Use [lecture_03_04.py](../lecture_03_04.py). It preserves the product endpoints and extends the greeting with a second required query parameter. The name-only example remains in `lecture_03_03.py`.
+
+```python
+# Supply both query parameters: /greet?name=Ali&age=20.
+@app.get("/greet")
+def greet_user(name: str, age: int):
+    # Neither argument appears in the route path, so both are query parameters.
+    # No default values means both name and age are required.
+    # FastAPI converts age to an integer; invalid values receive HTTP 422.
+    return {
+        "greet": f"Hello {name}, you are {age} years old.",
+        "name": name,
+        "age": age,
+    }
+```
+
+### Understand the two parameters
+
+- `name: str` receives text.
+- `age: int` converts the query value to an integer and validates it.
+- Both parameters are required because neither has a default value.
+- `?` starts the query string; `&` separates `name=Ali` from `age=20`.
+- The response includes a greeting plus separate fields so you can see that `age` is a JSON number.
+
+### Run and check
+
+Stop the previous server with `Ctrl+C`, then run:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_04.py
+```
+
+Open <http://127.0.0.1:8000/greet?name=Ali&age=20>. Expect HTTP 200 and:
+
+```json
+{
+  "greet": "Hello Ali, you are 20 years old.",
+  "name": "Ali",
+  "age": 20
+}
+```
+
+From another PowerShell terminal, keep the URL quoted:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/greet?name=Ali&age=20"
+```
+
+| Request | Expected result |
+| --- | --- |
+| `/greet?name=Ali&age=20` | HTTP 200 with the greeting and both values. |
+| `/greet?age=20&name=Ali` | The same response: these parameter names can appear in either order. |
+| `/greet?name=Ali` | HTTP 422 because `age` is missing. |
+| `/greet?age=20` | HTTP 422 because `name` is missing. |
+| `/greet?name=Ali&age=twenty` | HTTP 422 because `age` cannot be parsed as an integer. |
+| `/greet?name=Ali&age=20.5` | HTTP 422 because the age value is not an integer. |
+
+FastAPI checks the inputs before calling the function. For invalid age input, the validation details identify `age` in the query. An integer annotation alone does not enforce a realistic age range: negative integers are accepted at this stage. Additional constraints can be introduced later.
+
+Open `/docs`, expand **GET /greet**, select **Try it out**, and fill in both required fields before selecting **Execute**.
+
+### Practice
+
+1. Change the name and age and predict all three response fields.
+2. Reverse the order of the query parameters and compare the responses.
+3. Remove one parameter, then try a nonnumeric age. Explain each validation error.
+
 ## Next small steps
 
 Add product query filtering and HTTP error handling in later separate examples. Preserve each completed example as its own file.

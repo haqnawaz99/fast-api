@@ -26,7 +26,7 @@ If activation is blocked, use the environment's Python directly:
 | --- | --- | --- |
 | 01: Installation and version check | [Notes](notes/lecture_01.md) | [main.py](main.py) |
 | 02: First server and GET endpoints | [Notes](notes/lecture_02.md) | [Empty app](lecture_02.py), [home endpoint](lecture_02_01.py), [contact endpoint](lecture_02_02.py) |
-| 03: Path and query parameters | [Notes](notes/lecture_03.md) | [Product list](lecture_03.py), [path parameter](lecture_03_01.py), [product lookup](lecture_03_02.py), [query greeting](lecture_03_03.py), [mock data](mock.py) |
+| 03: Path and query parameters | [Notes](notes/lecture_03.md) | [Product list](lecture_03.py), [path parameter](lecture_03_01.py), [product lookup](lecture_03_02.py), [query greeting](lecture_03_03.py), [name and age](lecture_03_04.py), [mock data](mock.py) |
 
 Each small step has a separate Python example, preserving earlier steps for teaching.
 
@@ -71,3 +71,11 @@ For the required query-parameter greeting, stop the server and run:
 ```
 
 Open <http://127.0.0.1:8000/greet?name=Ali>. Omitting `name` returns HTTP 422.
+
+For two required query parameters, stop the server and run:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_04.py
+```
+
+Open <http://127.0.0.1:8000/greet?name=Ali&age=20>. Both values are required; `age` must be an integer.
