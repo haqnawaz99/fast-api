@@ -2,7 +2,7 @@
 
 ## Step 1: Return a list of products
 
-Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; query handling will follow later.
+Start with a small product dataset and an endpoint that returns every product. Then learn to read path and query parameters in URLs. Step 4 implements a path parameter in a separate Python example; step 6 adds a required query parameter.
 
 ## Learning objectives
 
@@ -309,9 +309,220 @@ Open <http://127.0.0.1:8000/docs>, expand **GET /product/{product_id}**, and sel
 2. Request `/product/abc` and compare its status with `/products/100`.
 3. Explain why `/product/999` succeeds even though the dataset has only three products.
 
+## Step 5: Find and return the matching product
+
+Use [lecture_03_02.py](../lecture_03_02.py). This new example keeps `/` and `/products` and changes the single-product function from echoing an ID to searching the data. The previous examples remain available.
+
+```python
+# Capture the product ID from the path and validate it as an integer.
+@app.get("/product/{product_id}")
+def get_one_product(product_id: int):
+    # Check each product dictionary in the list, one at a time.
+    for one_product in products:
+        # Read its ID and compare it with the ID supplied in the URL.
+        if one_product.get("id") == product_id:
+            # A match ends the function immediately and returns the full product.
+            return one_product
+
+    # Outside the loop: return this only after every product has been checked.
+    # A normal dictionary response still has HTTP status 200 in this step.
+    return {"error": "Product not Found for this ID."}
+```
+
+### Understand each part
+
+- `products` is the list imported from `mock.py`.
+- `for one_product in products:` visits one dictionary at a time. `one_product` is a temporary variable for the current dictionary.
+- `one_product.get("id")` reads that dictionary's ID. If the key is absent, `.get()` returns `None` instead of raising a `KeyError`.
+- `==` compares the stored ID with the requested ID. It does not assign a value.
+- `return one_product` sends the full matching dictionary back and immediately ends the function. No additional `break` is needed.
+- The last `return` runs only if the loop finishes without a match. It also handles an empty product list.
+
+The stored IDs and the validated `product_id` are integers, so they can be compared directly. A product ID is not a list index: the code checks the `id` field rather than assuming an item's position.
+
+### Trace a request for product 2
+
+1. FastAPI receives `/product/2` and converts the path value to integer `2`.
+2. The loop checks Laptop: `1 == 2` is false, so it continues.
+3. It checks Mouse: `2 == 2` is true.
+4. The function returns the Mouse dictionary and stops before checking Keyboard.
+
+For `/product/100`, none of the three IDs match, so the function reaches the error-message return after the loop.
+
+### Why indentation matters
+
+Keep the error-message return outside the `for` loop, at the same indentation level as `for`. If it is inside the loop, a nonmatching first product could end the search before later products are checked.
+
+### Run and check
+
+Stop the earlier server with `Ctrl+C`, then run:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_02.py
+```
+
+Open <http://127.0.0.1:8000/product/2>. Expect HTTP 200 and:
+
+```json
+{"id": 2, "name": "Mouse", "price": 25}
+```
+
+Open <http://127.0.0.1:8000/product/100>. In this teaching step, expect HTTP 200 with:
+
+```json
+{"error": "Product not Found for this ID."}
+```
+
+An `error` key is just response content. Returning this dictionary does not automatically set HTTP status 404. A later error-handling step can introduce `HTTPException` to send a proper missing-product status.
+
+| Request | Expected result in `lecture_03_02.py` |
+| --- | --- |
+| `/product/1` | HTTP 200 with Laptop. |
+| `/product/2` | HTTP 200 with Mouse; confirms the search continues past the first item. |
+| `/product/3` | HTTP 200 with Keyboard. |
+| `/product/100` | HTTP 200 with the custom error message. |
+| `/product/abc` | HTTP 422 before the lookup function runs. |
+| `/products/100` | HTTP 404 because this path has no route. |
+
+Use `/docs` to execute the same requests and inspect both the response body and status code.
+
+### Practice
+
+1. Request product 3 and explain which comparisons happen before it is returned.
+2. In a practice copy, move the final return inside the loop. Predict and observe what happens when requesting product 2, then restore the indentation.
+3. Explain the difference between an invalid integer, a valid integer with no matching product, and a URL with no matching route.
+
+## Step 6: Greet a user with a query parameter
+
+Use [lecture_03_03.py](../lecture_03_03.py). It keeps the previous endpoints and appends:
+
+```python
+# Query parameter: supply name after ? in the URL, e.g. /greet?name=Ali.
+@app.get("/greet")
+def greet_user(name: str):
+    # name is a query parameter because it is not a placeholder in /greet.
+    # str means text; with no default value, name is required.
+    # The f-string inserts the supplied name into the greeting.
+    return {"greet": f"Hello {name}, Hows You ?"}
+```
+
+### Understand the code
+
+For `/greet?name=Ali`, the path is `/greet` and the query parameter is `name=Ali`. FastAPI reads the value and passes `"Ali"` to `greet_user()`.
+
+`name: str` declares a text argument. Because `name` is not a placeholder in the route, FastAPI treats this simple argument as a query parameter. With no default value, it is required.
+
+An **f-string** starts with `f` and inserts the value inside braces into the text. Here, `{name}` inserts the supplied name. These braces format a response string; they do not declare a URL path parameter.
+
+### Run and check
+
+Stop the earlier server with `Ctrl+C`, then run in PowerShell:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_03.py
+```
+
+Open <http://127.0.0.1:8000/greet?name=Ali>. Expect HTTP 200 and:
+
+```json
+{"greet": "Hello Ali, Hows You ?"}
+```
+
+| Request | Expected result |
+| --- | --- |
+| `/greet?name=Sara` | HTTP 200 with `Hello Sara, Hows You ?` in the `greet` field. |
+| `/greet` | HTTP 422: required `name` is missing. |
+| `/greet?username=Ali` | HTTP 422: `username` does not supply `name`. |
+| `/greet/Ali` | HTTP 404: this route takes the name in the query string. |
+| `/greet?name=Ali%20Khan` | HTTP 200 with `Hello Ali Khan, Hows You ?`. |
+| `/greet?name=` | HTTP 200 with `Hello , Hows You ?`. |
+
+Required means the parameter must be present. `str` alone does not require nonempty text. Missing-value validation details identify `name` as a query parameter.
+
+Open `/docs`, expand **GET /greet**, select **Try it out**, enter a name, and select **Execute**. The documentation marks `name` as required.
+
+### Compare the endpoints
+
+`/product/2` passes an ID in the path. `/greet?name=Ali` passes a name after `?`. Implementing `name` on `/greet` does not add filtering to `/products`; the product-list endpoint still returns every product.
+
+### Practice
+
+1. Request a greeting for your own name.
+2. Omit `name`, then supply an empty value. Explain the difference in responses.
+3. Explain why `/greet/Ali` does not call this function.
+
+## Step 7: Receive name and age together
+
+Use [lecture_03_04.py](../lecture_03_04.py). It preserves the product endpoints and extends the greeting with a second required query parameter. The name-only example remains in `lecture_03_03.py`.
+
+```python
+# Supply both query parameters: /greet?name=Ali&age=20.
+@app.get("/greet")
+def greet_user(name: str, age: int):
+    # Neither argument appears in the route path, so both are query parameters.
+    # No default values means both name and age are required.
+    # FastAPI converts age to an integer; invalid values receive HTTP 422.
+    return {
+        "greet": f"Hello {name}, you are {age} years old.",
+        "name": name,
+        "age": age,
+    }
+```
+
+### Understand the two parameters
+
+- `name: str` receives text.
+- `age: int` converts the query value to an integer and validates it.
+- Both parameters are required because neither has a default value.
+- `?` starts the query string; `&` separates `name=Ali` from `age=20`.
+- The response includes a greeting plus separate fields so you can see that `age` is a JSON number.
+
+### Run and check
+
+Stop the previous server with `Ctrl+C`, then run:
+
+```powershell
+.\.venv\Scripts\fastapi.exe dev lecture_03_04.py
+```
+
+Open <http://127.0.0.1:8000/greet?name=Ali&age=20>. Expect HTTP 200 and:
+
+```json
+{
+  "greet": "Hello Ali, you are 20 years old.",
+  "name": "Ali",
+  "age": 20
+}
+```
+
+From another PowerShell terminal, keep the URL quoted:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/greet?name=Ali&age=20"
+```
+
+| Request | Expected result |
+| --- | --- |
+| `/greet?name=Ali&age=20` | HTTP 200 with the greeting and both values. |
+| `/greet?age=20&name=Ali` | The same response: these parameter names can appear in either order. |
+| `/greet?name=Ali` | HTTP 422 because `age` is missing. |
+| `/greet?age=20` | HTTP 422 because `name` is missing. |
+| `/greet?name=Ali&age=twenty` | HTTP 422 because `age` cannot be parsed as an integer. |
+| `/greet?name=Ali&age=20.5` | HTTP 422 because the age value is not an integer. |
+
+FastAPI checks the inputs before calling the function. For invalid age input, the validation details identify `age` in the query. An integer annotation alone does not enforce a realistic age range: negative integers are accepted at this stage. Additional constraints can be introduced later.
+
+Open `/docs`, expand **GET /greet**, select **Try it out**, and fill in both required fields before selecting **Execute**.
+
+### Practice
+
+1. Change the name and age and predict all three response fields.
+2. Reverse the order of the query parameters and compare the responses.
+3. Remove one parameter, then try a nonnumeric age. Explain each validation error.
+
 ## Next small steps
 
-Build product lookup and query handling in later separate examples. Keep `lecture_03.py` as the product-list baseline and `lecture_03_01.py` as the ID echo example.
+Add product query filtering and HTTP error handling in later separate examples. Preserve each completed example as its own file.
 
 ## Reference
 
